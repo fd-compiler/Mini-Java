@@ -1,10 +1,21 @@
 grammar miniJava;
 
+@header{
+    import AbstractSyntax.*;
+}
+
 @parser::members{
     String [] my_s = new String[10];
 }//todo: change this
 
-goal: mainClass (classDec)*EOF {System.out.println("this is main");};
+goal
+locals [int cd=0]
+    : mainClass (classDec{
+                    $cd++;
+                }
+                )*EOF {
+                    A_ClassDec[] ls = new A_ClassDec[$cd];
+                };//todo: add return value
 
 mainClass: 'class' ID '{' 'public' 'static' 'void' 'main' '(' 'String' '[' ']' ID ')' '{'
 statement '}' '}';
