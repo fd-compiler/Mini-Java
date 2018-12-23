@@ -1,6 +1,6 @@
 grammar miniJava;
 
-goal: mainClass (classDec)*;
+goal: mainClass (classDec)*EOF;
 
 mainClass: 'class' ID '{' 'public' 'static' 'void' 'main' '(' 'String' '[' ']' ID ')' '{'
 statement '}' '}';
@@ -18,32 +18,32 @@ type: 'int' '[' ']'
     | ID
     ;
 
-statement: '{' (statement)* '}'
-         | 'if' '(' expression ')' statement 'else' statement
-         | 'while' '(' expression ')' statement
-         | 'System.out.println' '(' expression ')' ';'
-         | ID '=' expression ';'
-         | ID '[' expression ']' '=' expression ';'
+statement: '{' (statement)* '}'                                           # block
+         | 'if' '(' expression ')' statement 'else' statement             # if
+         | 'while' '(' expression ')' statement                           # while
+         | 'System.out.println' '(' expression ')' ';'                    # printExpr
+         | ID '=' expression ';'                                          # assign
+         | ID '[' expression ']' '=' expression ';'                       # assignArray
          ;
 
-expression: expression ('&&'|'<'|'+'|'-'|'*') expression
-          | expression '[' expression ']'
-          | expression '.' 'length'
-          | expression '.' ID '(' (expression (',' expression)* )? ')'
-          | INT
-          | 'true'
-          | 'false'
-          | ID
-          | 'this'
-          | 'new' 'int' '[' expression ']'
-          | 'new' ID '(' ')'
-          | '!' expression
-          | '(' expression ')'
+expression: expression op=('&&'|'<'|'+'|'-'|'*') expression               # ALOp
+          | expression '[' expression ']'                                 # indexArray
+          | expression '.' 'length'                                       # length
+          | expression '.' ID '(' (expression (',' expression)* )? ')'    # callMember
+          | INT                                                           # int
+          | 'true'                                                        # true
+          | 'false'                                                       # false
+          | ID                                                            # id
+          | 'this'                                                        # this
+          | 'new' 'int' '[' expression ']'                                # newArray
+          | 'new' ID '(' ')'                                              # newObject
+          | '!' expression                                                # notExpr
+          | '(' expression ')'                                            # parens
           ;
 
 ID: [_a-zA-Z][_a-zA-Z0-9]*;
 INT: [1-9][0-9]*;
-WS: [ \t\n]+ -> skip;
+WS: [ \t\n\r]+ -> skip;
 
 MUL: '*';
 ADD: '+';

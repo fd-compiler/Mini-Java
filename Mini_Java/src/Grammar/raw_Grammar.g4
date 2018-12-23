@@ -1,6 +1,9 @@
-grammar miniJava;
+grammar raw_Grammar;
+// This is a raw grammar for mini Java.
+// However, it is not very useful so we need to modify it.
+// The grammar we actually used is Parser/miniJava.g4
 
-goal: mainClass (classDec)*;
+goal: mainClass (classDec)*EOF;
 
 mainClass: 'class' ID '{' 'public' 'static' 'void' 'main' '(' 'String' '[' ']' ID ')' '{'
 statement '}' '}';
@@ -43,7 +46,7 @@ expression: expression ('&&'|'<'|'+'|'-'|'*') expression
 
 ID: [_a-zA-Z][_a-zA-Z0-9]*;
 INT: [1-9][0-9]*;
-WS: [ \t\n]+ -> skip;
+WS: [ \t\n\r]+ -> skip;
 
 MUL: '*';
 ADD: '+';
