@@ -16,7 +16,8 @@ public class test {
         miniJavaParser parser = new miniJavaParser(tokens);
         ParseTree tree = parser.goal();
 
-        miniJavaBaseVisitor<Integer> eval = new miniJavaBaseVisitor<>();
+        //miniJavaBaseVisitor<Integer> eval = new miniJavaBaseVisitor<>();
+        astGenerator eval = new astGenerator();
         eval.visit(tree);
     }
 }

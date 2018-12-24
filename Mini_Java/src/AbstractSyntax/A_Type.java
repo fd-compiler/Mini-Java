@@ -1,17 +1,11 @@
 package AbstractSyntax;
 
-public class A_Type {
-    enum category {
-        array_t,
-        int_t,
-        bool_t,
-        ref_t
-    }
-    category cat;
-    A_IdExp id = null;
-    public A_Type(category cat,A_IdExp id){
-        this.cat=cat;
-        if(cat==category.ref_t){
+public class A_Type extends Absyn{
+    public int category;
+    public String id;
+    public A_Type(int cat,String id){
+        this.category = cat;
+        if(cat==3){
             this.id=id;
         }
     }

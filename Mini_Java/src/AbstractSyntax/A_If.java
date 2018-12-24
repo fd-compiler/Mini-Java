@@ -1,6 +1,6 @@
 package AbstractSyntax;
 
-public class A_If implements A_stmt{
+public class A_If extends A_stmt{
     A_exp exp;
     A_stmt branch1;
     A_stmt branch2;

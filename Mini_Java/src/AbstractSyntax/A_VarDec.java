@@ -1,9 +1,9 @@
 package AbstractSyntax;
 
-public class A_VarDec {
-    A_Type t;
-    A_IdExp id;
-    public A_VarDec(A_Type t,A_IdExp id){
+public class A_VarDec extends Absyn {
+    public Absyn t;
+    public String id;
+    public A_VarDec(Absyn t, String id){
         this.t=t;
         this.id=id;
     }

@@ -1,4 +1,4 @@
 package AbstractSyntax;
 
-public interface A_exp extends Absyn {
+public class A_exp extends Absyn {
 }

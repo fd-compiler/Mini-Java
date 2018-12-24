@@ -1,6 +1,6 @@
 package AbstractSyntax;
 
-public class A_AssignArray implements A_stmt{
+public class A_AssignArray extends A_stmt{
     A_IdExp id;
     A_exp index;
     A_exp value;

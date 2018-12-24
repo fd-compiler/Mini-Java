@@ -1,6 +1,6 @@
 package AbstractSyntax;
 
-public class A_Assign implements A_stmt {
+public class A_Assign extends A_stmt {
     A_IdExp id;
     A_exp exp;
     public A_Assign(A_IdExp id, A_exp exp){

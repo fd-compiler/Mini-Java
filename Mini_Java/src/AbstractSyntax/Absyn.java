@@ -1,4 +1,4 @@
 package AbstractSyntax;
 
-public interface Absyn {
+public class Absyn {
 }
