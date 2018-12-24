@@ -293,7 +293,7 @@
     <property name="$PROJECT_DIR$/src/Parser/miniJava.g4::/gen-listener" value="true" />
     <property name="$PROJECT_DIR$/src/Parser/miniJava.g4::/gen-visitor" value="true" />
     <property name="$PROJECT_DIR$/src/Parser/miniJava.g4::/output-dir" value="F:\Mini-Java\Mini_Java\src" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1545663859744" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1545664123655" />
     <property name="last_opened_file_path" value="$USER_HOME$/Downloads/code" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
