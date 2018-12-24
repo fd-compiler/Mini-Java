@@ -25,13 +25,15 @@ locals [int t]
     | ID            {$t=3;}
     ;
 
-statement: '{' (statement)* '}'                                           # block
-         | 'if' '(' expression ')' statement 'else' statement             # if
-         | 'while' '(' expression ')' statement                           # while
-         | 'System.out.println' '(' expression ')' ';'                    # printExpr
-         | ID '=' expression ';'                                          # assign
-         | ID '[' expression ']' '=' expression ';'                       # assignArray
-         ;
+statement
+locals [int st=0]
+    : '{' (statement {$st++;})* '}'                                  # block
+    | 'if' '(' expression ')' statement 'else' statement             # if
+    | 'while' '(' expression ')' statement                           # while
+    | 'System.out.println' '(' expression ')' ';'                    # printExpr
+    | ID '=' expression ';'                                          # assign
+    | ID '[' expression ']' '=' expression ';'                       # assignArray
+    ;
 
 expression: expression op=('&&'|'<'|'+'|'-'|'*') expression               # ALOp
           | expression '[' expression ']'                                 # indexArray

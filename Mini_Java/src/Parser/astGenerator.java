@@ -89,17 +89,57 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
         return type_node;
     }
 
-    @Override public Absyn visitBlock(miniJavaParser.BlockContext ctx) { return visitChildren(ctx); }
+    //block
+    @Override public Absyn visitBlock(miniJavaParser.BlockContext ctx) {
+        Absyn stmts[] = new Absyn[ctx.st];
+        for(int i=0;i<ctx.st;i++){
+            stmts[i] = visit(ctx.statement(i));
+        }
+        Absyn block = new A_Block(stmts);
+        return block;
+    }
 
-    @Override public Absyn visitIf(miniJavaParser.IfContext ctx) { return visitChildren(ctx); }
+    //if
+    @Override public Absyn visitIf(miniJavaParser.IfContext ctx) {
+        Absyn exp = visit(ctx.expression());
+        Absyn branch1 = visit(ctx.statement(0));
+        Absyn branch2 = visit(ctx.statement(1));
+        Absyn if_node = new A_If(exp,branch1,branch2);
+        return if_node;
+    }
 
-    @Override public Absyn visitWhile(miniJavaParser.WhileContext ctx) { return visitChildren(ctx); }
+    //while
+    @Override public Absyn visitWhile(miniJavaParser.WhileContext ctx) {
+        Absyn exp = visit(ctx.expression());
+        Absyn stmt = visit(ctx.statement());
+        Absyn while_node = new A_While(exp,stmt);
+        return while_node;
+    }
 
-    @Override public Absyn visitPrintExpr(miniJavaParser.PrintExprContext ctx) { return visitChildren(ctx); }
+    //print
+    @Override public Absyn visitPrintExpr(miniJavaParser.PrintExprContext ctx) {
+        Absyn exp = visit(ctx.expression());
+        Absyn print_node = new A_Print(exp);
+        return print_node;
+    }
 
-    @Override public Absyn visitAssign(miniJavaParser.AssignContext ctx) { return visitChildren(ctx); }
+    //assign
+    @Override public Absyn visitAssign(miniJavaParser.AssignContext ctx) {
+        //todo: change value in the table
+        String id = ctx.ID().getText();
+        Absyn exp = visit(ctx.expression());
+        Absyn assign = new A_Assign(id, exp);
+        return assign;
+    }
 
-    @Override public Absyn visitAssignArray(miniJavaParser.AssignArrayContext ctx) { return visitChildren(ctx); }
+    //assign array
+    @Override public Absyn visitAssignArray(miniJavaParser.AssignArrayContext ctx) {
+        String id = ctx.ID().getText();
+        Absyn index = visit(ctx.expression(0));
+        Absyn value = visit(ctx.expression(1));
+        Absyn assign_array = new A_AssignArray(id,index,value);
+        return assign_array;
+    }
 
     @Override public Absyn visitParens(miniJavaParser.ParensContext ctx) { return visitChildren(ctx); }
 

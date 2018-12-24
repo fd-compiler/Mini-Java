@@ -1,10 +1,10 @@
 package AbstractSyntax;
 
 public class A_AssignArray extends A_stmt{
-    A_IdExp id;
-    A_exp index;
-    A_exp value;
-    public A_AssignArray(A_IdExp id, A_exp index, A_exp value){
+    String  id;
+    Absyn index;
+    Absyn value;
+    public A_AssignArray(String id, Absyn index, Absyn value){
         this.id=id;
         this.index=index;
         this.value=value;

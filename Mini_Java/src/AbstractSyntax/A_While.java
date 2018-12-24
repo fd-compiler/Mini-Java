@@ -1,9 +1,9 @@
 package AbstractSyntax;
 
 public class A_While extends A_stmt{
-    A_exp exp;
-    A_stmt stmt;
-    public A_While(A_exp exp,A_stmt stmt){
+    Absyn exp;
+    Absyn stmt;
+    public A_While(Absyn exp, Absyn stmt){
         this.exp=exp;
         this.stmt=stmt;
     }
