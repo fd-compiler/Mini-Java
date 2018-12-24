@@ -4,8 +4,6 @@ import AbstractSyntax.*;
 
 public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
-
-
     //goal
     @Override public Absyn visitGoal(miniJavaParser.GoalContext ctx) {
         int n = ctx.cd;
@@ -134,6 +132,7 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
     //assign array
     @Override public Absyn visitAssignArray(miniJavaParser.AssignArrayContext ctx) {
+        //todo: change value in the table
         String id = ctx.ID().getText();
         Absyn index = visit(ctx.expression(0));
         Absyn value = visit(ctx.expression(1));
@@ -141,29 +140,101 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
         return assign_array;
     }
 
-    @Override public Absyn visitParens(miniJavaParser.ParensContext ctx) { return visitChildren(ctx); }
+    //parenthesis
+    @Override public Absyn visitParens(miniJavaParser.ParensContext ctx) {
+        return visit(ctx.expression());
+    }
 
-    @Override public Absyn visitCallMember(miniJavaParser.CallMemberContext ctx) { return visitChildren(ctx); }
+    //call member
+    @Override public Absyn visitCallMember(miniJavaParser.CallMemberContext ctx) {
+        Absyn obj = visit(ctx.expression(0));
+        String method = ctx.ID().getText();
+        Absyn[] paras = new Absyn[ctx.pa];
+        Absyn[] paras_t = new Absyn[ctx.pa];
+        Absyn call_node = new A_CallExp(obj,method,paras_t,paras);
+        return call_node;
+    }
 
-    @Override public Absyn visitIndexArray(miniJavaParser.IndexArrayContext ctx) { return visitChildren(ctx); }
+    //index array
+    @Override public Absyn visitIndexArray(miniJavaParser.IndexArrayContext ctx) {
+        Absyn exp = visit(ctx.expression(0));
+        Absyn idx = visit(ctx.expression(1));
+        Absyn indexArray = new A_ArrayIndex(exp,idx);
+        return indexArray;
+    }
 
-    @Override public Absyn visitFalse(miniJavaParser.FalseContext ctx) { return visitChildren(ctx); }
+    //false
+    @Override public Absyn visitFalse(miniJavaParser.FalseContext ctx) {
+        Absyn f = new A_BoolExp(false);
+        return f;
+    }
 
-    @Override public Absyn visitThis(miniJavaParser.ThisContext ctx) { return visitChildren(ctx); }
+    //this
+    @Override public Absyn visitThis(miniJavaParser.ThisContext ctx) {
+        //todo: implement 'this'
+        Absyn this_node = new A_This();
+        return this_node;
+    }
 
-    @Override public Absyn visitLength(miniJavaParser.LengthContext ctx) { return visitChildren(ctx); }
+    //length
+    @Override public Absyn visitLength(miniJavaParser.LengthContext ctx) {
+        Absyn exp = visit(ctx.expression());
+        Absyn length_node = new A_ArrayLen(exp);
+        return length_node;
+    }
 
-    @Override public Absyn visitNewArray(miniJavaParser.NewArrayContext ctx) { return visitChildren(ctx); }
+    //new array
+    @Override public Absyn visitNewArray(miniJavaParser.NewArrayContext ctx) {
+        //todo: implement new array
+        Absyn exp = visit(ctx.expression());
+        Absyn newArray = new A_NewArray(exp);
+        return newArray;
+    }
 
-    @Override public Absyn visitInt(miniJavaParser.IntContext ctx) { return visitChildren(ctx); }
+    //expression -> int
+    @Override public Absyn visitInt(miniJavaParser.IntContext ctx) {
+        int i = Integer.valueOf(ctx.INT().getText());
+        Absyn int_node = new A_IntExp(i);
+        return int_node;
+    }
 
-    @Override public Absyn visitALOp(miniJavaParser.ALOpContext ctx) { return visitChildren(ctx); }
+    //algorithm logical operation
+    @Override public Absyn visitALOp(miniJavaParser.ALOpContext ctx) {
+        Absyn left = visit(ctx.expression(0));
+        Absyn right = visit(ctx.expression(1));
+        A_Oper op = A_Oper.and;
+        switch (ctx.op.getType()){
+            case miniJavaParser.AND: op = A_Oper.and; break;
+            case miniJavaParser.MUL: op = A_Oper.times; break;
+            case miniJavaParser.ADD: op = A_Oper.plus; break;
+            case miniJavaParser.SUB: op = A_Oper.minus; break;
+            case miniJavaParser.LT:  op = A_Oper.lt; break;
+            default:
+                System.out.println("error");
+        }
+        Absyn alop = new A_OpExp(op,left,right);
+        return alop;
+    }
 
-    @Override public Absyn visitNotExpr(miniJavaParser.NotExprContext ctx) { return visitChildren(ctx); }
+    //!expression
+    @Override public Absyn visitNotExpr(miniJavaParser.NotExprContext ctx) {
+        Absyn exp = visit(ctx.expression());
+        Absyn notExp = new A_NotExp(exp);
+        return notExp;
+    }
 
-    @Override public Absyn visitNewObject(miniJavaParser.NewObjectContext ctx) { return visitChildren(ctx); }
+    //new object
+    @Override public Absyn visitNewObject(miniJavaParser.NewObjectContext ctx) {
+        String id = ctx.ID().getText();
+        Absyn newObj = new A_NewObj(id);
+        return newObj;
+    }
 
-    @Override public Absyn visitTrue(miniJavaParser.TrueContext ctx) { return visitChildren(ctx); }
+    //true
+    @Override public Absyn visitTrue(miniJavaParser.TrueContext ctx) {
+        Absyn t = new A_BoolExp(true);
+        return t;
+    }
 
     //expression -> ID
     @Override public Absyn visitId(miniJavaParser.IdContext ctx) {

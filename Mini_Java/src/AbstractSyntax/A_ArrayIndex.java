@@ -1,9 +1,9 @@
 package AbstractSyntax;
 
 public class A_ArrayIndex extends A_exp{
-    A_exp array;
-    A_exp index;
-    public A_ArrayIndex(A_exp ar, A_exp idx){
+    public Absyn array;
+    public Absyn index;
+    public A_ArrayIndex(Absyn ar, Absyn idx){
         array=ar;
         index=idx;
     }

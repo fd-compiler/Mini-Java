@@ -35,20 +35,22 @@ locals [int st=0]
     | ID '[' expression ']' '=' expression ';'                       # assignArray
     ;
 
-expression: expression op=('&&'|'<'|'+'|'-'|'*') expression               # ALOp
-          | expression '[' expression ']'                                 # indexArray
-          | expression '.' 'length'                                       # length
-          | expression '.' ID '(' (expression (',' expression)* )? ')'    # callMember
-          | INT                                                           # int
-          | 'true'                                                        # true
-          | 'false'                                                       # false
-          | ID                                                            # id
-          | 'this'                                                        # this
-          | 'new' 'int' '[' expression ']'                                # newArray
-          | 'new' ID '(' ')'                                              # newObject
-          | '!' expression                                                # notExpr
-          | '(' expression ')'                                            # parens
-          ;
+expression
+locals [int pa=0]
+    : expression op=('&&'|'<'|'+'|'-'|'*') expression                              # ALOp
+    | expression '[' expression ']'                                                # indexArray
+    | expression '.' 'length'                                                      # length
+    | expression '.' ID '(' (expression (',' expression {$pa++;})* {$pa++;})? ')'  # callMember
+    | INT                                                                          # int
+    | 'true'                                                                       # true
+    | 'false'                                                                      # false
+    | ID                                                                           # id
+    | 'this'                                                                       # this
+    | 'new' 'int' '[' expression ']'                                               # newArray
+    | 'new' ID '(' ')'                                                             # newObject
+    | '!' expression                                                               # notExpr
+    | '(' expression ')'                                                           # parens
+    ;
 
 ID: [_a-zA-Z][_a-zA-Z0-9]*;
 INT: [1-9][0-9]*;

@@ -25,28 +25,32 @@ locals [int t]
     | ID            {$t=3;}
     ;
 
-statement: '{' (statement)* '}'                                           # block
-         | 'if' '(' expression ')' statement 'else' statement             # if
-         | 'while' '(' expression ')' statement                           # while
-         | 'System.out.println' '(' expression ')' ';'                    # printExpr
-         | ID '=' expression ';'                                          # assign
-         | ID '[' expression ']' '=' expression ';'                       # assignArray
-         ;
+statement
+locals [int st=0]
+    : '{' (statement {$st++;})* '}'                                  # block
+    | 'if' '(' expression ')' statement 'else' statement             # if
+    | 'while' '(' expression ')' statement                           # while
+    | 'System.out.println' '(' expression ')' ';'                    # printExpr
+    | ID '=' expression ';'                                          # assign
+    | ID '[' expression ']' '=' expression ';'                       # assignArray
+    ;
 
-expression: expression op=('&&'|'<'|'+'|'-'|'*') expression               # ALOp
-          | expression '[' expression ']'                                 # indexArray
-          | expression '.' 'length'                                       # length
-          | expression '.' ID '(' (expression (',' expression)* )? ')'    # callMember
-          | INT                                                           # int
-          | 'true'                                                        # true
-          | 'false'                                                       # false
-          | ID                                                            # id
-          | 'this'                                                        # this
-          | 'new' 'int' '[' expression ']'                                # newArray
-          | 'new' ID '(' ')'                                              # newObject
-          | '!' expression                                                # notExpr
-          | '(' expression ')'                                            # parens
-          ;
+expression
+locals [int pa=0]
+    : expression op=('&&'|'<'|'+'|'-'|'*') expression                              # ALOp
+    | expression '[' expression ']'                                                # indexArray
+    | expression '.' 'length'                                                      # length
+    | expression '.' ID '(' (expression (',' expression {$pa++;})* {$pa++;})? ')'  # callMember
+    | INT                                                                          # int
+    | 'true'                                                                       # true
+    | 'false'                                                                      # false
+    | ID                                                                           # id
+    | 'this'                                                                       # this
+    | 'new' 'int' '[' expression ']'                                               # newArray
+    | 'new' ID '(' ')'                                                             # newObject
+    | '!' expression                                                               # notExpr
+    | '(' expression ')'                                                           # parens
+    ;
 
 ID: [_a-zA-Z][_a-zA-Z0-9]*;
 INT: [1-9][0-9]*;
