@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import Parser.*;
+import ErrorDetection.*;
 
 public class test {
     static public void main(String []args) throws Exception{
@@ -19,5 +20,7 @@ public class test {
         //miniJavaBaseVisitor<Integer> eval = new miniJavaBaseVisitor<>();
         astGenerator eval = new astGenerator();
         eval.visit(tree);
+        ErrorDetector detector = new ErrorDetector(eval.root);
+        detector.recursiveCheck();
     }
 }

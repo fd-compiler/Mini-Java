@@ -4,6 +4,8 @@ import AbstractSyntax.*;
 
 public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
+    public Absyn root;
+
     //goal
     @Override public Absyn visitGoal(miniJavaParser.GoalContext ctx) {
         int n = ctx.cd;
@@ -13,8 +15,7 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
             classes[i] = visit(ctx.classDec(i));
         }
         Absyn goal = new A_Goal(mainC,classes);
-        //int shit =((A_MainClass)(((A_Goal) goal).a_main)).standout;
-        //System.out.println(shit);
+        root = goal;
         return goal;
     }
 
