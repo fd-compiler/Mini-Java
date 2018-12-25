@@ -19,10 +19,6 @@ public class SymbolTable {
         return h;
     }
 
-    public void insert(String key, int binding) {
-        int index = hash(key);
-        table[index] =  new bucket(key, binding, table[index]);
-    }
 
     //before insert or update or delete, call lookup
     public int lookup(String key) throws UndefinedIdException{ //ljl:加入了抛异常
@@ -36,12 +32,16 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
+    public void insert(String key, int binding) {
+        int index = hash(key);
+        table[index] =  new bucket(key, binding, table[index]);
+    }
+
     public void pop(String key) {
         int index = hash(key);
         table[index] = table[index].next;
     }
 
-    //ljl: 加入update
     public void update(String key, int value){
         pop(key);
         insert(key,value);
@@ -69,7 +69,7 @@ public class SymbolTable {
     }
 
     public void update_b(String key, boolean value){
-        pop(key);
+        pop_b(key);
         insert_b(key, value);
     }
 
@@ -95,7 +95,7 @@ public class SymbolTable {
     }
 
     public void update_a(String key, int[] value){
-        pop(key);
+        pop_a(key);
         insert_a(key, value);
     }
 }
