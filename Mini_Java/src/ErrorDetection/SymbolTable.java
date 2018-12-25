@@ -3,6 +3,7 @@ package ErrorDetection;
 public class SymbolTable {
     private static final int SIZE = 200;
     public bucket[] table = new bucket[SIZE];
+    public bucket_b[] table_b = new bucket_b[SIZE];
 
     SymbolTable() {
 
@@ -46,19 +47,29 @@ public class SymbolTable {
     }
 
     public boolean lookup_b(String key) throws UndefinedIdException{
+        int index = hash(key);
+        bucket_b b;
+        for(b = table_b[index]; b != null; b = b.next) {
+            if(b.key.equals((key))) {
+                return b.binding;
+            }
+        }
         throw new UndefinedIdException(key);
     }
 
-    public void insert_b(String key, boolean value){
-
+    public void insert_b(String key, boolean binding){
+        int index = hash(key);
+        table_b[index] =  new bucket_b(key, binding, table_b[index]);
     }
 
     public void pop_b(String key){
-
+        int index = hash(key);
+        table_b[index] = table_b[index].next;
     }
 
     public void update_b(String key, boolean value){
-
+        pop(key);
+        insert_b(key, value);
     }
 }
 
@@ -75,6 +86,14 @@ class bucket {
 }
 
 class bucket_b {
+    String key;
+    boolean binding;
+    bucket_b next;
 
+    bucket_b(String key, boolean binding, bucket_b next) {
+        this.key = key;
+        this.binding = binding;
+        this.next = next;
+    }
 }
 
