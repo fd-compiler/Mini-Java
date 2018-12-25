@@ -510,7 +510,7 @@ public class miniJavaParser extends Parser {
 					{
 					setState(97);
 					varDec();
-					_localctx.vd++
+					_localctx.vd++;
 					}
 					} 
 				}
