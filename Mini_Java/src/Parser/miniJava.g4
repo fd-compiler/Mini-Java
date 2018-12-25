@@ -14,7 +14,7 @@ varDec: type ID ';';
 
 methodDec
 locals [int vd=0, int st=0, int pa=0]
-: 'public' type ID '(' (type ID (',' type ID {$pa++;})* {$pa++;})? ')' '{' (varDec)* (statement)*
+: 'public' type ID '(' (type ID (',' type ID {$pa++;})* {$pa++;})? ')' '{' (varDec {$vd++})* (statement {$st++;})*
 'return' expression ';' '}';
 
 type
