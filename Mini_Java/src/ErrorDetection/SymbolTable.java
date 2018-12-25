@@ -4,6 +4,7 @@ public class SymbolTable {
     private static final int SIZE = 200;
     public bucket[] table = new bucket[SIZE];
     public bucket_b[] table_b = new bucket_b[SIZE];
+    public bucket_a[] table_a = new bucket_a[SIZE];
 
     SymbolTable() {
 
@@ -71,6 +72,32 @@ public class SymbolTable {
         pop(key);
         insert_b(key, value);
     }
+
+    public int[] lookup_a(String key) throws UndefinedIdException{
+        int index = hash(key);
+        bucket_a b;
+        for(b = table_a[index]; b != null; b = b.next) {
+            if(b.key.equals((key))) {
+                return b.binding;
+            }
+        }
+        throw new UndefinedIdException(key);
+    }
+
+    public void insert_a(String key, int[] binding){
+        int index = hash(key);
+        table_a[index] =  new bucket_a(key, binding, table_a[index]);
+    }
+
+    public void pop_a(String key){
+        int index = hash(key);
+        table_a[index] = table_a[index].next;
+    }
+
+    public void update_a(String key, int[] value){
+        pop(key);
+        insert_a(key, value);
+    }
 }
 
 class bucket {
@@ -91,6 +118,18 @@ class bucket_b {
     bucket_b next;
 
     bucket_b(String key, boolean binding, bucket_b next) {
+        this.key = key;
+        this.binding = binding;
+        this.next = next;
+    }
+}
+
+class bucket_a {
+    String key;
+    int[] binding;
+    bucket_a next;
+
+    bucket_a(String key, int[] binding, bucket_a next) {
         this.key = key;
         this.binding = binding;
         this.next = next;
