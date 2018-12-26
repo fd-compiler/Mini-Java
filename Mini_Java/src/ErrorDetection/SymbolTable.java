@@ -47,6 +47,7 @@ public class SymbolTable {
         insert(key,value);
     }
 
+    //bucket_boolean
     public boolean lookup_b(String key) throws UndefinedIdException{
         int index = hash(key);
         bucket_b b;
@@ -73,6 +74,7 @@ public class SymbolTable {
         insert_b(key, value);
     }
 
+    //bucket_array
     public int[] lookup_a(String key) throws UndefinedIdException{
         int index = hash(key);
         bucket_a b;
@@ -97,6 +99,20 @@ public class SymbolTable {
     public void update_a(String key, int[] value){
         pop_a(key);
         insert_a(key, value);
+    }
+
+    public void newArray(String key, int len) {
+        int index = hash(key);
+        int[] binding = new int[len];
+        update_a(key, binding);
+    }
+
+    public int findIndex(String key, int i) throws UndefinedIdException{
+        int index = hash(key);
+
+        if(table_a[index].binding.length < i)
+            throw new UndefinedIdException(key);
+        else return table_a[index].binding[i];
     }
 }
 
