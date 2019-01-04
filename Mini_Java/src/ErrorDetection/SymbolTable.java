@@ -1,6 +1,7 @@
 package ErrorDetection;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class SymbolTable {
@@ -11,7 +12,7 @@ public class SymbolTable {
 
     public static Map<String, InheritanceTree> s2tree = new HashMap<>();
 
-    public SymbolTable(){
+    static{
         InheritanceTree t_int = new InheritanceTree("int");
         s2tree.put("int",t_int);
         InheritanceTree t_array = new InheritanceTree("int[]");
@@ -20,7 +21,42 @@ public class SymbolTable {
         s2tree.put("boolean",t_bool);
     }
 
-    void registerClass(String id, String parent) throws ClassRegisterException{
+    public static void checkNullClass() throws ClassRegisterException{
+        Iterator<String> iterator = s2tree.keySet().iterator();
+        while(iterator.hasNext()){
+            InheritanceTree temp_tree = s2tree.get(iterator.next());
+            if(!temp_tree.define){
+                throw new ClassRegisterException("Undefined class: "+temp_tree.id);
+            }
+        }
+    }
+
+    public static void main(String []args){
+        try {
+            registerClass("B", "C");
+            registerClass("C","A");
+            registerClass("A",null);
+            checkNullClass();
+        }
+        catch (ClassRegisterException e){
+            System.out.println(e);
+        }
+
+        Iterator<String> iterator = s2tree.keySet().iterator();
+        while(iterator.hasNext()){
+            String s = iterator.next();
+            InheritanceTree p = s2tree.get(s);
+            while(p!=null){
+                System.out.print(p.id);
+                System.out.print("->");
+                p=p.parent;
+            }
+            System.out.println("null");
+        }
+    }
+
+
+    public static void registerClass(String id, String parent) throws ClassRegisterException{
         if(parent==null){
             if(s2tree.containsKey(id)){
                 if(s2tree.get(id).define){

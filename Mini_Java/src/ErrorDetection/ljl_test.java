@@ -21,6 +21,3 @@ public class ljl_test {
         }
     }
 }
-class shit extends shit{
-
-}
