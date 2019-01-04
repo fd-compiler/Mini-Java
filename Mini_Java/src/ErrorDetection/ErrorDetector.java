@@ -5,10 +5,57 @@ import AbstractSyntax.*;
 public class ErrorDetector {
     Absyn root;
 
-    SymbolTable symbolTable = new SymbolTable();
-
+    private boolean classvar;
+    private String currentClass;
+    private String currentMethod;
     public ErrorDetector(Absyn root){
         this.root = root;
+    }
+
+    /** Register classes and check invalid declaration
+     *  Errors includes:
+     *  1.extending undefined class
+     *  2.cyclic inheritance
+     */
+    public void checkClasses() {
+        checkClasses(root);
+        try {
+            SymbolTable.checkNullClass();
+        }
+        catch (ClassRegisterException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void checkClasses(Absyn node){
+        if(node.getClass()==A_Goal.class){
+            checkClasses(((A_Goal)node).a_main);
+            Absyn []classes = ((A_Goal)node).classes;
+            for(int i=0;i<classes.length;i++){
+                checkClasses(classes[i]);
+            }
+        }
+        else if(node.getClass()==A_MainClass.class){
+            String id = ((A_MainClass)node).id;
+            try {
+                SymbolTable.registerClass(id, null);
+            }
+            catch (ClassRegisterException e){
+                System.out.println(e.getMessage());
+            }
+        }
+        else if(node.getClass()==A_ClassDec.class){
+            String id = ((A_ClassDec)node).id;
+            String superclass = ((A_ClassDec)node).superclass;
+            if(superclass.compareTo("")==0)
+                superclass=null;
+            try {
+                SymbolTable.registerClass(id, superclass);
+            }
+            catch (ClassRegisterException e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     public void recursiveCheck(){
@@ -26,15 +73,16 @@ public class ErrorDetector {
         }
         else if(node.getClass()==A_MainClass.class){
             //here we enter the main method of the program
-            //todo: get id and register in the Inheritance Tree's forest
-            String id = ((A_MainClass)node).id;
             //todo: register args if we want to support String
             Absyn stmt = ((A_MainClass)node).stmt;
             recursiveCheck(stmt);
         }
         else if(node.getClass()==A_ClassDec.class){
-            //todo: get id and register this class, check if extends
+            //class declaration
+            String id = ((A_ClassDec)node).id;
             Absyn [] varDecs = ((A_ClassDec)node).varDecs;
+            classvar = true;
+            currentClass = id;
             for(int i=0;i<varDecs.length;i++){
                 recursiveCheck(varDecs[i]);
             }
@@ -44,11 +92,25 @@ public class ErrorDetector {
             }
         }
         else if(node.getClass()==A_VarDec.class){
-            //todo: register in symbol table
-            System.out.println("var dec");
+            String id = ((A_VarDec)node).id;
+            Absyn absyn = ((A_VarDec)node).t;
+            int cat = ((A_Type)absyn).category;
+            String typename = ((A_Type)absyn).id;
+            if(cat==3&&(!SymbolTable.s2tree.containsKey(typename))){
+                System.out.println("Cannot resolve symbol: "+typename);
+                return;
+            }
+            if(classvar){
+                InheritanceTree temp_tree = SymbolTable.s2tree.get(currentClass);
+                temp_tree.append_field(id,cat,typename);
+            }
+            //todo: check vardec in method during runtime
         }
         else if(node.getClass()==A_MethodDec.class){
             //todo: get id and register
+            String id = ((A_MethodDec)node).id;
+            Absyn absyn = ((A_MethodDec)node).ret_t;
+
             System.out.println("Method Declare");
         }
         else if(node.getClass()==A_Block.class){
@@ -120,5 +182,18 @@ public class ErrorDetector {
         else if(node.getClass()==A_NotExp.class){
 
         }
+    }
+
+    private int checkType(Absyn node){
+        if(node.getClass()!=A_Type.class){
+            System.out.println("Debug: should not use checkType");
+        }
+        int cat = ((A_Type)node).category;
+        String typename = ((A_Type)node).id;
+        if(cat==3&&(!SymbolTable.s2tree.containsKey(typename))){
+            System.out.println("Cannot resolve symbol: "+typename);
+            return -1;
+        }
+        return 0;
     }
 }
