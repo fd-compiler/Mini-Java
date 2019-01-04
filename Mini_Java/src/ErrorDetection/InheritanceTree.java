@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InheritanceTree {
+    public boolean define=false;
     public String id;
     public InheritanceTree parent;
 
@@ -16,6 +17,7 @@ public class InheritanceTree {
     List<String> field_names;
 
     InheritanceTree(String id){
+        define=true;
         this.id=id;
     }
 

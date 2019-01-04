@@ -4,6 +4,9 @@ import AbstractSyntax.*;
 
 public class ErrorDetector {
     Absyn root;
+
+    SymbolTable symbolTable = new SymbolTable();
+
     public ErrorDetector(Absyn root){
         this.root = root;
     }
@@ -14,6 +17,7 @@ public class ErrorDetector {
 
     public void recursiveCheck(Absyn node){
         if(node.getClass()==A_Goal.class){
+            //the root
             recursiveCheck(((A_Goal)node).a_main);
             Absyn []classes = ((A_Goal)node).classes;
             for(int i=0;i<classes.length;i++){
@@ -23,7 +27,8 @@ public class ErrorDetector {
         else if(node.getClass()==A_MainClass.class){
             //here we enter the main method of the program
             //todo: get id and register in the Inheritance Tree's forest
-            //todo: register args
+            String id = ((A_MainClass)node).id;
+            //todo: register args if we want to support String
             Absyn stmt = ((A_MainClass)node).stmt;
             recursiveCheck(stmt);
         }

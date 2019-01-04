@@ -20,6 +20,65 @@ public class SymbolTable {
         s2tree.put("boolean",t_bool);
     }
 
+    void registerClass(String id, String parent) throws ClassRegisterException{
+        if(parent==null){
+            if(s2tree.containsKey(id)){
+                if(s2tree.get(id).define){
+                    throw new ClassRegisterException("Duplicate class: " + id);
+                }
+                else{
+                    s2tree.get(id).define=true;
+                }
+            }
+            else{
+                InheritanceTree temp_tree = new InheritanceTree(id,null);
+                temp_tree.define=true;
+                s2tree.put(id,temp_tree);
+            }
+            return;
+        }
+        if(id.compareTo(parent)==0){
+            throw new ClassRegisterException("Cyclic inheritance: "+id+" extends "+parent);
+        }
+        if(s2tree.containsKey(id)){
+            if(s2tree.get(id).define) {
+                throw new ClassRegisterException("Duplicate class: " + id);
+            }
+            else{
+                InheritanceTree temp_tree = s2tree.get(id);
+                temp_tree.define=true;
+                if(s2tree.containsKey(parent)){ // both id and parent exist
+                    InheritanceTree p = s2tree.get(parent);
+                    while(p!=null){
+                        if(p.id.compareTo(id)==0){
+                            throw new ClassRegisterException("Cyclic inheritance: "+id+" extends "+parent);
+                        }
+                        p=p.parent;
+                    }
+                    temp_tree.parent = s2tree.get(parent);
+                }
+                else{
+                    s2tree.put(parent,new InheritanceTree(parent,null));
+                    temp_tree.parent = s2tree.get(parent);
+                }
+            }
+        }else{
+            if(!s2tree.containsKey(parent)){ // both id and parent are new
+                InheritanceTree temp_parent = new InheritanceTree(parent,null);
+                InheritanceTree temp_tree = new InheritanceTree(id,temp_parent);
+                temp_tree.define=true;
+                s2tree.put(parent,temp_parent);
+                s2tree.put(id,temp_tree);
+            }
+            else {
+                InheritanceTree temp_tree = new InheritanceTree(id,s2tree.get(parent));
+                temp_tree.define=true;
+                s2tree.put(id,temp_tree);
+            }
+        }
+
+    }
+
     int hash(String s) {
         int h = 0;
         int i = 0;
