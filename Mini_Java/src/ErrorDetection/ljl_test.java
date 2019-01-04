@@ -19,5 +19,7 @@ public class ljl_test {
         for(int i=0;i<list.size();i++){
             System.out.println(list.get(i));
         }
+        int []a = new int[0];
+        System.out.println("luelueleu");
     }
 }
