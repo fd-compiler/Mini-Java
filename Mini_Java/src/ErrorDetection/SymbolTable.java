@@ -1,13 +1,23 @@
 package ErrorDetection;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SymbolTable {
     private static final int SIZE = 200;
-    public bucket[] table = new bucket[SIZE];
-    public bucket_b[] table_b = new bucket_b[SIZE];
-    public bucket_a[] table_a = new bucket_a[SIZE];
+    public bucket[] table = new bucket[SIZE];       // used for int
+    public bucket_b[] table_b = new bucket_b[SIZE]; // used for boolean
+    public bucket_a[] table_a = new bucket_a[SIZE]; // used for array
 
-    SymbolTable() {
+    public static Map<String, InheritanceTree> s2tree = new HashMap<>();
 
+    public SymbolTable(){
+        InheritanceTree t_int = new InheritanceTree("int");
+        s2tree.put("int",t_int);
+        InheritanceTree t_array = new InheritanceTree("int[]");
+        s2tree.put("int[]",t_array);
+        InheritanceTree t_bool = new InheritanceTree("boolean");
+        s2tree.put("boolean",t_bool);
     }
 
     int hash(String s) {
@@ -19,13 +29,12 @@ public class SymbolTable {
         return h;
     }
 
-
     //before insert or update or delete, call lookup
     public int lookup(String key) throws UndefinedIdException{ //ljl:加入了抛异常
         int index = hash(key);
         bucket b;
         for(b = table[index]; b != null; b = b.next) {
-            if(b.key.equals((key))) {
+            if(b.key.compareTo((key))==0) {
                 return b.binding;
             }
         }
@@ -51,7 +60,7 @@ public class SymbolTable {
         int index = hash(key);
         bucket_b b;
         for(b = table_b[index]; b != null; b = b.next) {
-            if(b.key.equals((key))) {
+            if(b.key.compareTo((key))==0) {
                 return b.binding;
             }
         }
@@ -77,7 +86,7 @@ public class SymbolTable {
         int index = hash(key);
         bucket_a b;
         for(b = table_a[index]; b != null; b = b.next) {
-            if(b.key.equals((key))) {
+            if(b.key.compareTo((key))==0) {
                 return b.binding;
             }
         }
@@ -92,6 +101,11 @@ public class SymbolTable {
     public void pop_a(String key){
         int index = hash(key);
         table_a[index] = table_a[index].next;
+    }
+
+    public int[] new_a(int size){
+        int []w = new int[size];
+        return w;
     }
 
     public void update_a(String key, int[] value){
@@ -134,5 +148,11 @@ class bucket_a {
         this.binding = binding;
         this.next = next;
     }
+
 }
 
+class bucket_c {
+    String key;
+    InheritanceTree type;
+    //todo: 用一个树t作为class的实例的保存，包括String[] field_names, t[] fields;
+}
