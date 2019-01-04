@@ -175,7 +175,6 @@ public class SymbolTable {
     }
 
     public void newArray(String key, int len) {
-        int index = hash(key);
         int[] binding = new int[len];
         update_a(key, binding);
     }
