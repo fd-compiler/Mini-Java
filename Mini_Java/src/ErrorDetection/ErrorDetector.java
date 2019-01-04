@@ -110,8 +110,17 @@ public class ErrorDetector {
             //todo: get id and register
             String id = ((A_MethodDec)node).id;
             Absyn absyn = ((A_MethodDec)node).ret_t;
-
-            System.out.println("Method Declare");
+            if(checkType(absyn)==-1){
+                return;
+            }
+            Absyn []absyns = ((A_MethodDec)node).paras_t;
+            for(int i=0;i<absyns.length;i++){
+                if(checkType(absyns[i])==-1){
+                    return;
+                }
+            }
+            InheritanceTree temp_tree = SymbolTable.s2tree.get(currentClass);
+            temp_tree.append_method(id,node);
         }
         else if(node.getClass()==A_Block.class){
             Absyn []stmts = ((A_Block)node).stmts;
@@ -134,32 +143,37 @@ public class ErrorDetector {
             recursiveCheck(stmt);
         }
         else if(node.getClass()==A_Print.class){
-            //todo: check whether int
-            System.out.println("print");
+            //todo: check whether int during runtime
+            recursiveCheck(((A_Print)node).exp);
         }
         else if(node.getClass()==A_Assign.class){
-            String id = ((A_Assign)node).id;
-            //todo: check id in the symbol table
-            //if in the table
-            System.out.println("assign");
+            //todo: check id in the symbol table during runtime
+            recursiveCheck(((A_Assign)node).exp);
         }
         else if(node.getClass()==A_AssignArray.class){
-            String id = ((A_AssignArray)node).id;
-            //todo: check id in the symbol table
-            System.out.println("assign array");
-            //todo: check index out of range
+            //todo: check id in the symbol table during runtime
+            //todo: check index out of range during runtime
+            recursiveCheck(((A_AssignArray)node).index);
+            recursiveCheck(((A_AssignArray)node).value);
         }
         else if(node.getClass()==A_OpExp.class){
-
+            recursiveCheck(((A_OpExp)node).left);
+            recursiveCheck(((A_OpExp)node).right);
         }
         else if(node.getClass()==A_ArrayIndex.class){
-
+            recursiveCheck(((A_ArrayIndex)node).array);
+            recursiveCheck(((A_ArrayIndex)node).index);
         }
         else if(node.getClass()==A_ArrayLen.class){
-
+            recursiveCheck(((A_ArrayLen)node).array);
         }
         else if(node.getClass()==A_CallExp.class){
-
+            //todo: check whether this method exists
+            Absyn []absyns = ((A_CallExp)node).paras;
+            recursiveCheck(((A_CallExp)node).obj);
+            for(int i=0;i<absyns.length;i++){
+                recursiveCheck(absyns[i]);
+            }
         }
         else if(node.getClass()==A_IntExp.class){
 
@@ -174,13 +188,16 @@ public class ErrorDetector {
 
         }
         else if(node.getClass()==A_NewArray.class){
-
+            recursiveCheck(((A_NewArray)node).exp);
         }
         else if(node.getClass()==A_NewObj.class){
-
+            String id = ((A_NewObj)node).id;
+            if(!SymbolTable.s2tree.containsKey(id)){
+                System.out.println("Cannot resolve symbol: "+id);
+            }
         }
         else if(node.getClass()==A_NotExp.class){
-
+            recursiveCheck(((A_NotExp)node).exp);
         }
     }
 

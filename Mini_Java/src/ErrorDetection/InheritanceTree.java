@@ -33,7 +33,7 @@ public class InheritanceTree {
         nodes = new ArrayList<>();
     }
 
-    public void append_field(String n,int cat,String t){
+    void append_field(String n,int cat,String t){
         if(cat==3){
             types.add(t);
         }else if(cat==0){
@@ -44,5 +44,10 @@ public class InheritanceTree {
             types.add("int");
         }
         field_names.add(n);
+    }
+
+    void append_method(String m, Absyn node){
+        methods.add(m);
+        nodes.add(node);
     }
 }
