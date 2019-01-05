@@ -53,7 +53,7 @@ locals [int pa=0]
     ;
 
 ID: [_a-zA-Z][_a-zA-Z0-9]*;
-INT: [1-9][0-9]*;
+INT: ([1-9][0-9]*)|'0';
 WS: [ \t\n\r]+ -> skip;
 
 MUL: '*';

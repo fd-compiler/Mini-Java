@@ -207,7 +207,6 @@ public class RuntimeInterpreter {
                 System.err.println("Incompatible types. Required: 'boolean', Found: "+res.type);
             }
             while(res.bValue){
-                System.out.println("loop");
                 interpret(((A_While)node).stmt);
                 res = interpret(((A_While)node).exp);
             }
