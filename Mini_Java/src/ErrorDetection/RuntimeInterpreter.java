@@ -23,7 +23,17 @@ public class RuntimeInterpreter {
             return res;
         }
         else if(node.getClass()==A_ClassDec.class){
-
+            String id = ((A_ClassDec)node).id;
+            Absyn [] varDecs = ((A_ClassDec)node).varDecs;
+            classvar = true;
+            currentClass = id;
+            for(int i=0;i<varDecs.length;i++){
+                interpret(varDecs[i]);
+            }
+            Absyn [] methodDecs = ((A_ClassDec)node).methodDecs;
+            for(int i=0;i<methodDecs.length;i++){
+                interpret(methodDecs[i]);
+            }
         }
         else if(node.getClass()==A_VarDec.class){
 
@@ -35,7 +45,8 @@ public class RuntimeInterpreter {
 
         }
         else if(node.getClass()==A_If.class){
-
+            boolean res = interpret(((A_If)node).exp);
+            if(res)
         }
         else if(node.getClass()==A_While.class){
 
@@ -83,13 +94,16 @@ public class RuntimeInterpreter {
 
         }
         else if(node.getClass()==A_IntExp.class){
-
+            int i = ((A_IntExp)node).i;
+            return i;
         }
         else if(node.getClass()==A_BoolExp.class){
-
+            boolean b = ((A_BoolExp)node).b;
+            return 0;
         }
         else if(node.getClass()==A_IdExp.class){
-
+            String id = ((A_IdExp)node).id;
+            return 0;
         }
         else if(node.getClass()==A_This.class){
 
