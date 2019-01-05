@@ -8,18 +8,18 @@ public class RuntimeInterpreter {
         this.root=root;
     }
 
-    public int interpret(Absyn node){
+    public Result interpret(Absyn node){
         if(node.getClass()==A_Goal.class){
             interpret(((A_Goal)node).a_main);
             Absyn []classes = ((A_Goal)node).classes;
             for(int i=0;i<classes.length;i++){
                 interpret(classes[i]);
             }
-            return 0;
+            return null;
         }
         else if(node.getClass()==A_MainClass.class){
             Absyn stmt = ((A_MainClass)node).stmt;
-            int res = interpret(stmt);
+            Result res = interpret(stmt);
             return res;
         }
         else if(node.getClass()==A_ClassDec.class){
@@ -66,40 +66,107 @@ public class RuntimeInterpreter {
             A_Oper oper = ((A_OpExp)node).oper;
             Absyn left = ((A_OpExp)node).left;
             Absyn right = ((A_OpExp)node).right;
-            int res_l = interpret(left);
-            int res_r = interpret(right);
+            Result res_l = interpret(left);
+            Result res_r = interpret(right);
+            Result res = new Result();
             if(oper == A_Oper.and){
-                return res_l & res_r;
+                if(res_l.type.compareTo("boolean") == 0 &&
+                        res_r.type.compareTo("boolean") == 0){
+                    res.type = "boolean";
+                    res.bValue = res_l.bValue && res_r.bValue;
+                    return res;
+                }
+                else{
+                    System.out.println("About '&&': Incompatible type. Required: 'boolean' Found: " +
+                            res_l.type + "and " + res_r.type);
+                    return null;
+                }
             }
             else if(oper == A_Oper.minus){
-                return res_l - res_r;
+               if(res_l.type.compareTo("int") == 0 &&
+                    res_r.type.compareTo(("int")) == 0){
+                   res.type = "int";
+                   res.iValue = res_l.iValue - res_r.iValue;
+                   return res;
+               }
+               else{
+                   System.out.println("About '-': Incompatible type. Required: 'int' Found: " +
+                           res_l.type + "and " + res_r.type);
+                   return null;
+               }
             }
             else if(oper == A_Oper.plus){
-                return res_l + res_r;
+                if(res_l.type.compareTo("int") == 0 &&
+                        res_r.type.compareTo(("int")) == 0){
+                    res.type = "int";
+                    res.iValue = res_l.iValue + res_r.iValue;
+                    return res;
+                }
+                else{
+                    System.out.println("About '+': Incompatible type. Required: 'int' Found: " +
+                            res_l.type + "and " + res_r.type);
+                    return null;
+                }
             }
             else if(oper == A_Oper.times){
-                return res_l * res_r;
+                if(res_l.type.compareTo("int") == 0 &&
+                        res_r.type.compareTo(("int")) == 0){
+                    res.type = "int";
+                    res.iValue = res_l.iValue * res_r.iValue;
+                    return res;
+                }
+                else{
+                    System.out.println("About '*': Incompatible type. Required: 'int' Found: " +
+                            res_l.type + "and " + res_r.type);
+                    return null;
+                }
             }
             else if(oper == A_Oper.lt){
-                return res_l + res_r;
+                if(res_l.type.compareTo("int") == 0 &&
+                        res_r.type.compareTo(("int")) == 0){
+                    res.type = "boolean";
+                    res.bValue = res_l.iValue < res_r.iValue;
+                    return res;
+                }
+                else{
+                    System.out.println("About '<': Incompatible type. Required: 'int' Found: " +
+                            res_l.type + "and " + res_r.type);
+                    return null;
+                }
             }
         }
         else if(node.getClass()==A_ArrayIndex.class){
 
         }
         else if(node.getClass()==A_ArrayLen.class){
-
+            Result arr = interpret(((A_ArrayLen)node).array);
+            if(arr.type.compareTo("int[]") == 0){
+                Result res = new Result();
+                res.type = "int";
+                res.iValue = arr.aValue.length;
+                return res;
+            }
+            else{
+                System.out.println("Incompatible type. Required: 'int[]' Found: " + arr.type);
+                return null;
+            }
         }
         else if(node.getClass()==A_CallExp.class){
 
         }
         else if(node.getClass()==A_IntExp.class){
             int i = ((A_IntExp)node).i;
-            return i;
+            Result res = new Result();
+            res.type = "int";
+            res.iValue = i;
+            return res;
         }
         else if(node.getClass()==A_BoolExp.class){
             boolean b = ((A_BoolExp)node).b;
-            return 0;
+            Result res = new Result();
+            res.type = "boolean";
+            res.bValue = b;
+            return res;
         }
         else if(node.getClass()==A_IdExp.class){
             String id = ((A_IdExp)node).id;
@@ -115,7 +182,17 @@ public class RuntimeInterpreter {
 
         }
         else if(node.getClass()==A_NotExp.class){
-
+            Result exp = interpret(((A_NotExp)node).exp);
+            Result res = new Result();
+            if(exp.type.compareTo("boolean") == 0){
+                res.type = "boolean";
+                res.bValue = !exp.bValue;
+                return res;
+            }
+            else{
+                System.out.println("Opera '!' cannot be applied to " + exp.type);
+                return null;
+            }
         }
         else{
             return 0;
