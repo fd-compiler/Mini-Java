@@ -209,19 +209,6 @@ public class SymbolTable {
         pop_a(key);
         insert_a(key, value);
     }
-
-    public void newArray(String key, int len) {
-        int[] binding = new int[len];
-        update_a(key, binding);
-    }
-
-    public int findIndex(String key, int i) throws UndefinedIdException{
-        int index = hash(key);
-
-        if(table_a[index].binding.length < i)
-            throw new UndefinedIdException(key);
-        else return table_a[index].binding[i];
-    }
 }
 
 class bucket {
