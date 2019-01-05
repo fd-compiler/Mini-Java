@@ -151,6 +151,11 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
         Absyn obj = visit(ctx.expression(0));
         String method = ctx.ID().getText();
         Absyn[] paras = new Absyn[ctx.pa];
+        if(ctx.pa!=0){
+            for(int i=0;i<ctx.pa;i++){
+                paras[i]=visit(ctx.expression(i+1));
+            }
+        }
         Absyn call_node = new A_CallExp(obj,method,paras);
         return call_node;
     }
