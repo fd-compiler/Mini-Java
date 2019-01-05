@@ -136,7 +136,29 @@ public class RuntimeInterpreter {
             }
         }
         else if(node.getClass()==A_ArrayIndex.class){
-
+            Result array = interpret(((A_ArrayIndex)node).array);
+            Result index = interpret(((A_ArrayIndex)node).index);
+            if(array.type.compareTo("int[]") != 0){
+                System.out.println("About x of 'x[y]': Incompatible type. Required: 'int[]' Found: " +
+                        array.type);
+                return null;
+            }
+            else if(index.type.compareTo("int") != 0){
+                System.out.println("About y of 'x[y]': Incompatible type. Required: 'int' Found: " +
+                        index.type);
+                return null;
+            }
+            else{
+                Result res = new Result();
+                res.type = "int";
+                int index_new = index.iValue;
+                if(index.iValue >= array.aValue.length){
+                    System.out.println("Warning: index bigger than length of array, have done with %");
+                    index_new = index.iValue % array.aValue.length;
+                }
+                res.iValue = array.aValue[index_new];
+                return res;
+            }
         }
         else if(node.getClass()==A_ArrayLen.class){
             Result arr = interpret(((A_ArrayLen)node).array);
