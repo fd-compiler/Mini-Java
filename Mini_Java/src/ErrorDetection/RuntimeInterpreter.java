@@ -228,7 +228,18 @@ public class RuntimeInterpreter {
 
         }
         else if(node.getClass()==A_NewArray.class){
-
+            Result exp = interpret(((A_NewArray)node).exp);
+            if(exp.type.compareTo("int") != 0){
+                System.out.println("About x of 'new int[x]' Incompatible type. " +
+                        "Required: 'int' Found: " + exp.type);
+                return null;
+            }
+            else {
+                Result res = new Result();
+                res.type = "int[]";
+                res.aValue = new int[exp.iValue];
+                return res;
+            }
         }
         else if(node.getClass()==A_NewObj.class){
 
