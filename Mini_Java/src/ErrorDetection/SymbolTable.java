@@ -244,11 +244,17 @@ class bucket {
     String key;
     int binding;
     bucket next;
+    boolean isNull;
 
+    bucket(bucket next){
+        isNull=true;
+        this.next=next;
+    }
     bucket(String key, int binding, bucket next) {
         this.key = key;
         this.binding = binding;
         this.next = next;
+        isNull=false;
     }
 }
 
@@ -256,11 +262,17 @@ class bucket_b {
     String key;
     boolean binding;
     bucket_b next;
+    boolean isNull;
 
+    bucket_b(bucket_b next){
+        isNull=true;
+        this.next=next;
+    }
     bucket_b(String key, boolean binding, bucket_b next) {
         this.key = key;
         this.binding = binding;
         this.next = next;
+        isNull=false;
     }
 }
 
@@ -268,11 +280,17 @@ class bucket_a {
     String key;
     int[] binding;
     bucket_a next;
+    boolean isNull;
 
+    bucket_a(bucket_a next){
+        isNull=true;
+        this.next=next;
+    }
     bucket_a(String key, int[] binding, bucket_a next) {
         this.key = key;
         this.binding = binding;
         this.next = next;
+        isNull=false;
     }
 
 }
@@ -281,10 +299,16 @@ class bucket_c {
     String key;
     Obj binding;
     bucket_c next;
+    boolean isNull;
+
+    bucket_c(bucket_c next){
+        isNull=true;
+        this.next=next;
+    }
     bucket_c(String key, Obj binding, bucket_c next){
         this.key=key;
         this.binding=binding;
         this.next=next;
+        isNull=false;
     }
-    //todo: 用一个树t作为class的实例的保存，包括String[] field_names, t[] fields;
 }
