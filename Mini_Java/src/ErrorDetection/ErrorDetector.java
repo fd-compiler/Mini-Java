@@ -131,7 +131,7 @@ public class ErrorDetector {
                     flag = -1;
                 }
             }
-            if(flag==-1)
+            if(flag==-1)//todo: no output ?
                 return -1;
             if(SymbolTable.s2tree.get(currentClass).methods.contains(id)){
                 System.err.println("Do not support overload: "+currentClass+"."+id);
