@@ -23,7 +23,7 @@ public class ErrorDetector {
             SymbolTable.checkNullClass();
         }
         catch (ClassRegisterException e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -41,7 +41,7 @@ public class ErrorDetector {
                 SymbolTable.registerClass(id, null);
             }
             catch (ClassRegisterException e){
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }
         }
         else if(node.getClass()==A_ClassDec.class){
@@ -53,7 +53,7 @@ public class ErrorDetector {
                 SymbolTable.registerClass(id, superclass);
             }
             catch (ClassRegisterException e){
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             }
         }
     }
@@ -62,7 +62,7 @@ public class ErrorDetector {
         recursiveCheck(root);
     }
 
-    public void recursiveCheck(Absyn node){
+    public int recursiveCheck(Absyn node){
         System.out.println(node.getClass().toString());
         if(node.getClass()==A_Goal.class){
             //the root
@@ -71,12 +71,14 @@ public class ErrorDetector {
             for(int i=0;i<classes.length;i++){
                 recursiveCheck(classes[i]);
             }
+            return 0;
         }
         else if(node.getClass()==A_MainClass.class){
             //here we enter the main method of the program
             //todo: register args if we want to support String
             Absyn stmt = ((A_MainClass)node).stmt;
             recursiveCheck(stmt);
+            return 0;
         }
         else if(node.getClass()==A_ClassDec.class){
             //class declaration
@@ -91,6 +93,7 @@ public class ErrorDetector {
             for(int i=0;i<methodDecs.length;i++){
                 recursiveCheck(methodDecs[i]);
             }
+            return 0;
         }
         else if(node.getClass()==A_VarDec.class){
             String id = ((A_VarDec)node).id;
@@ -98,36 +101,53 @@ public class ErrorDetector {
             int cat = ((A_Type)absyn).category;
             String typename = ((A_Type)absyn).id;
             if(cat==3&&(!SymbolTable.s2tree.containsKey(typename))){
-                System.out.println("Cannot resolve symbol: "+typename);
-                return;
+                System.err.println("Cannot resolve symbol: "+typename);
+                return -1;
             }
             if(classvar){
                 InheritanceTree temp_tree = SymbolTable.s2tree.get(currentClass);
                 temp_tree.append_field(id,cat,typename);
             }
+            return 0;
             //todo: check vardec in method during runtime
         }
         else if(node.getClass()==A_MethodDec.class){
-            //todo: get id and register
             String id = ((A_MethodDec)node).id;
             Absyn absyn = ((A_MethodDec)node).ret_t;
+
+            int flag = 0;
             if(checkType(absyn)==-1){
-                return;
+                flag = -1;
             }
             Absyn []absyns = ((A_MethodDec)node).paras_t;
             for(int i=0;i<absyns.length;i++){
                 if(checkType(absyns[i])==-1){
-                    return;
+                    flag = -1;
                 }
+            }
+            Absyn []varDecs = ((A_MethodDec)node).varDecs;
+            classvar=false;
+            for(int i=0;i<varDecs.length;i++){
+                if(-1==recursiveCheck(varDecs[i])){
+                    flag = -1;
+                }
+            }
+            if(flag==-1)
+                return -1;
+            if(SymbolTable.s2tree.get(currentClass).methods.contains(id)){
+                System.err.println("Do not support overload: "+currentClass+"."+id);
+                return -1;
             }
             InheritanceTree temp_tree = SymbolTable.s2tree.get(currentClass);
             temp_tree.append_method(id,node);
+            return 0;
         }
         else if(node.getClass()==A_Block.class){
             Absyn []stmts = ((A_Block)node).stmts;
             for(int i=0;i<stmts.length;i++){
                 recursiveCheck(stmts[i]);
             }
+            return 0;
         }
         else if(node.getClass()==A_If.class){
             Absyn exp = ((A_If)node).exp;
@@ -136,37 +156,45 @@ public class ErrorDetector {
             recursiveCheck(branch1);
             Absyn branch2 = ((A_If)node).branch2;
             recursiveCheck(branch2);
+            return 0;
         }
         else if(node.getClass()==A_While.class){
             Absyn exp = ((A_While)node).exp;
             recursiveCheck(exp);
             Absyn stmt = ((A_While)node).stmt;
             recursiveCheck(stmt);
+            return 0;
         }
         else if(node.getClass()==A_Print.class){
             //todo: check whether int during runtime
             recursiveCheck(((A_Print)node).exp);
+            return 0;
         }
         else if(node.getClass()==A_Assign.class){
             //todo: check id in the symbol table during runtime
             recursiveCheck(((A_Assign)node).exp);
+            return 0;
         }
         else if(node.getClass()==A_AssignArray.class){
             //todo: check id in the symbol table during runtime
             //todo: check index out of range during runtime
             recursiveCheck(((A_AssignArray)node).index);
             recursiveCheck(((A_AssignArray)node).value);
+            return 0;
         }
         else if(node.getClass()==A_OpExp.class){
             recursiveCheck(((A_OpExp)node).left);
             recursiveCheck(((A_OpExp)node).right);
+            return 0;
         }
         else if(node.getClass()==A_ArrayIndex.class){
             recursiveCheck(((A_ArrayIndex)node).array);
             recursiveCheck(((A_ArrayIndex)node).index);
+            return 0;
         }
         else if(node.getClass()==A_ArrayLen.class){
             recursiveCheck(((A_ArrayLen)node).array);
+            return 0;
         }
         else if(node.getClass()==A_CallExp.class){
             //todo: check whether this method exists
@@ -175,30 +203,37 @@ public class ErrorDetector {
             for(int i=0;i<absyns.length;i++){
                 recursiveCheck(absyns[i]);
             }
+            return 0;
         }
         else if(node.getClass()==A_IntExp.class){
-
+            return 0;
         }
         else if(node.getClass()==A_BoolExp.class){
-
+            return 0;
         }
         else if(node.getClass()==A_IdExp.class){
-
+            return 0;
         }
         else if(node.getClass()==A_This.class){
-
+            return 0;
         }
         else if(node.getClass()==A_NewArray.class){
             recursiveCheck(((A_NewArray)node).exp);
+            return 0;
         }
         else if(node.getClass()==A_NewObj.class){
             String id = ((A_NewObj)node).id;
             if(!SymbolTable.s2tree.containsKey(id)){
-                System.out.println("Cannot resolve symbol: "+id);
+                System.err.println("Cannot resolve symbol: "+id);
             }
+            return 0;
         }
         else if(node.getClass()==A_NotExp.class){
             recursiveCheck(((A_NotExp)node).exp);
+            return 0;
+        }
+        else{
+            return 0;
         }
     }
 
@@ -209,7 +244,7 @@ public class ErrorDetector {
         int cat = ((A_Type)node).category;
         String typename = ((A_Type)node).id;
         if(cat==3&&(!SymbolTable.s2tree.containsKey(typename))){
-            System.out.println("Cannot resolve symbol: "+typename);
+            System.err.println("Cannot resolve symbol: "+typename);
             return -1;
         }
         return 0;

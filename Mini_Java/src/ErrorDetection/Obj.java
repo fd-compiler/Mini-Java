@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Obj {
-    String id;
+    //String id;
     InheritanceTree type;
 
     int iValue;
@@ -20,13 +20,17 @@ public class Obj {
         return type.id;
     }
 
+    public Obj(String ft){
+        type = SymbolTable.s2tree.get(ft);
+    }
+
     public Obj(String id, String ft){
-        this.id=id;
+        //this.id=id;
         type = SymbolTable.s2tree.get(ft);
     }
 
     public Obj(String id, InheritanceTree type){
-        this.id = id;
+        //this.id = id;
         this.type = type;
         field_names = new ArrayList<>();
         types = new ArrayList<>();

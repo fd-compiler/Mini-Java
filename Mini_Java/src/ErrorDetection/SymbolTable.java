@@ -6,9 +6,10 @@ import java.util.Map;
 
 public class SymbolTable {
     private static final int SIZE = 200;
-    public bucket[] table = new bucket[SIZE];       // used for int
-    public bucket_b[] table_b = new bucket_b[SIZE]; // used for boolean
-    public bucket_a[] table_a = new bucket_a[SIZE]; // used for array
+    public static bucket[] table = new bucket[SIZE];       // used for int
+    public static bucket_b[] table_b = new bucket_b[SIZE]; // used for boolean
+    public static bucket_a[] table_a = new bucket_a[SIZE]; // used for array
+    public static bucket_c[] table_c = new bucket_c[SIZE]; // used for objects
 
     public static Map<String, InheritanceTree> s2tree = new HashMap<>();
 
@@ -54,7 +55,6 @@ public class SymbolTable {
             System.out.println("null");
         }
     }
-
 
     public static void registerClass(String id, String parent) throws ClassRegisterException{
         if(parent==null){
@@ -115,7 +115,7 @@ public class SymbolTable {
 
     }
 
-    private int hash(String s) {
+    private static int hash(String s) {
         int h = 0;
         int i = 0;
         for(; s.charAt(i) != '\0'; i++) {
@@ -125,7 +125,7 @@ public class SymbolTable {
     }
 
     //before insert or update or delete, call lookup
-    public int lookup(String key) throws UndefinedIdException{ //ljl:加入了抛异常
+    public static int lookup(String key) throws UndefinedIdException{ //ljl:加入了抛异常
         int index = hash(key);
         bucket b;
         for(b = table[index]; b != null; b = b.next) {
@@ -136,22 +136,22 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
-    public void insert(String key, int binding) {
+    public static void insert(String key, int binding) {
         int index = hash(key);
         table[index] =  new bucket(key, binding, table[index]);
     }
 
-    public void pop(String key) {
+    public static void pop(String key) {
         int index = hash(key);
         table[index] = table[index].next;
     }
 
-    public void update(String key, int value){
+    public static void update(String key, int value){
         pop(key);
         insert(key,value);
     }
 
-    public boolean lookup_b(String key) throws UndefinedIdException{
+    public static boolean lookup_b(String key) throws UndefinedIdException{
         int index = hash(key);
         bucket_b b;
         for(b = table_b[index]; b != null; b = b.next) {
@@ -162,50 +162,81 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
-    public void insert_b(String key, boolean binding){
+    public static void insert_b(String key, boolean binding){
         int index = hash(key);
         table_b[index] =  new bucket_b(key, binding, table_b[index]);
     }
 
-    public void pop_b(String key){
+    public static void pop_b(String key){
         int index = hash(key);
         table_b[index] = table_b[index].next;
     }
 
-    public void update_b(String key, boolean value){
+    public static void update_b(String key, boolean value){
         pop_b(key);
         insert_b(key, value);
     }
 
-    public int[] lookup_a(String key) throws UndefinedIdException{
+    public static int[] lookup_a(String key) throws UndefinedIdException{
         int index = hash(key);
         bucket_a b;
         for(b = table_a[index]; b != null; b = b.next) {
-            if(b.key.compareTo((key))==0) {
+            if(b.key.compareTo(key)==0) {
                 return b.binding;
             }
         }
         throw new UndefinedIdException(key);
     }
 
-    public void insert_a(String key, int[] binding){
+    public static void insert_a(String key, int[] binding){
         int index = hash(key);
         table_a[index] =  new bucket_a(key, binding, table_a[index]);
     }
 
-    public void pop_a(String key){
+    public static void pop_a(String key){
         int index = hash(key);
         table_a[index] = table_a[index].next;
     }
 
-    public int[] new_a(int size){
+    public static int[] new_a(int size){
         int []w = new int[size];
         return w;
     }
 
-    public void update_a(String key, int[] value){
+    public static void update_a(String key, int[] value){
         pop_a(key);
         insert_a(key, value);
+    }
+
+    public static Obj lookup_c(String key) throws UndefinedIdException{
+        int index = hash(key);
+        bucket_c b;
+        for(b = table_c[index];b!=null;b=b.next){
+            if(b.key.compareTo(key)==0){
+                return b.binding;
+            }
+        }
+        throw new UndefinedIdException(key);
+    }
+
+    public static void insert_c(String key, Obj binding){
+        int index = hash(key);
+        table_c[index] = new bucket_c(key, binding, table_c[index]);
+    }
+
+    public static void pop_c(String key){
+        int index = hash(key);
+        table_c[index] = table_c[index].next;
+    }
+
+    public static Obj new_c(String t){
+        Obj o = new Obj(t);
+        return o;
+    }
+
+    public static void update_c(String key, Obj value){
+        pop_c(key);
+        insert_c(key,value);
     }
 }
 
@@ -248,6 +279,12 @@ class bucket_a {
 
 class bucket_c {
     String key;
-    InheritanceTree type;
+    Obj binding;
+    bucket_c next;
+    bucket_c(String key, Obj binding, bucket_c next){
+        this.key=key;
+        this.binding=binding;
+        this.next=next;
+    }
     //todo: 用一个树t作为class的实例的保存，包括String[] field_names, t[] fields;
 }

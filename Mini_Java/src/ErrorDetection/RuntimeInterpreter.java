@@ -202,20 +202,160 @@ public class RuntimeInterpreter {
 
         }
         else if(node.getClass()==A_OpExp.class){
-
+            A_Oper oper = ((A_OpExp)node).oper;
+            Absyn left = ((A_OpExp)node).left;
+            Absyn right = ((A_OpExp)node).right;
+            Result res_l = interpret(left);
+            Result res_r = interpret(right);
+            Result res = new Result();
+            if(oper == A_Oper.and){
+                if(res_l.type.compareTo("boolean") == 0 &&
+                        res_r.type.compareTo("boolean") == 0){
+                    res.type = "boolean";
+                    res.bValue = res_l.bValue && res_r.bValue;
+                    return res;
+                }
+                else{
+                    if(res_l.type.compareTo("boolean") != 0){
+                        System.out.println("About left of '&&': Incompatible type. " +
+                                "Required: 'boolean' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("boolean") != 0){
+                        System.out.println("About right of '&&': Incompatible type. " +
+                                "Required: 'boolean' Found: " + res_r.type );
+                    }
+                    return null;
+                }
+            }
+            else if(oper == A_Oper.minus){
+               if(res_l.type.compareTo("int") == 0 &&
+                    res_r.type.compareTo(("int")) == 0){
+                   res.type = "int";
+                   res.iValue = res_l.iValue - res_r.iValue;
+                   return res;
+               }
+               else{
+                   if(res_l.type.compareTo("int") != 0){
+                       System.out.println("About left of '-': Incompatible type. " +
+                               "Required: 'int' Found: " + res_l.type );
+                   }
+                   if(res_r.type.compareTo("int") != 0){
+                       System.out.println("About right of '-': Incompatible type. " +
+                               "Required: 'int' Found: " + res_r.type );
+                   }
+                   return null;
+               }
+            }
+            else if(oper == A_Oper.plus){
+                if(res_l.type.compareTo("int") == 0 &&
+                        res_r.type.compareTo(("int")) == 0){
+                    res.type = "int";
+                    res.iValue = res_l.iValue + res_r.iValue;
+                    return res;
+                }
+                else{
+                    if(res_l.type.compareTo("int") != 0){
+                        System.out.println("About left of '+': Incompatible type. " +
+                                "Required: 'int' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("int") != 0){
+                        System.out.println("About right of '+': Incompatible type. " +
+                                "Required: 'int' Found: " + res_r.type );
+                    }
+                    return null;
+                }
+            }
+            else if(oper == A_Oper.times){
+                if(res_l.type.compareTo("int") == 0 &&
+                        res_r.type.compareTo(("int")) == 0){
+                    res.type = "int";
+                    res.iValue = res_l.iValue * res_r.iValue;
+                    return res;
+                }
+                else{
+                    if(res_l.type.compareTo("int") != 0){
+                        System.out.println("About left of '*': Incompatible type. " +
+                                "Required: 'int' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("int") != 0){
+                        System.out.println("About right of '*': Incompatible type. " +
+                                "Required: 'int' Found: " + res_r.type );
+                    }
+                    return null;
+                }
+            }
+            else if(oper == A_Oper.lt){
+                if(res_l.type.compareTo("int") == 0 &&
+                        res_r.type.compareTo(("int")) == 0){
+                    res.type = "boolean";
+                    res.bValue = res_l.iValue < res_r.iValue;
+                    return res;
+                }
+                else{
+                    if(res_l.type.compareTo("int") != 0){
+                        System.out.println("About left of '<': Incompatible type. " +
+                                "Required: 'int' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("int") != 0){
+                        System.out.println("About right of '<': Incompatible type. " +
+                                "Required: 'int' Found: " + res_r.type );
+                    }
+                    return null;
+                }
+            }
         }
         else if(node.getClass()==A_ArrayIndex.class){
-
+            Result array = interpret(((A_ArrayIndex)node).array);
+            Result index = interpret(((A_ArrayIndex)node).index);
+            if(array.type.compareTo("int[]") != 0){
+                System.out.println("About x of 'x[y]': Incompatible type. Required: 'int[]' Found: " +
+                        array.type);
+                return null;
+            }
+            else if(index.type.compareTo("int") != 0){
+                System.out.println("About y of 'x[y]': Incompatible type. Required: 'int' Found: " +
+                        index.type);
+                return null;
+            }
+            else{
+                Result res = new Result();
+                res.type = "int";
+                int index_new = index.iValue;
+                if(index.iValue >= array.aValue.length){
+                    System.out.println("Warning: index bigger than length of array, have done with %");
+                    index_new = index.iValue % array.aValue.length;
+                }
+                res.iValue = array.aValue[index_new];
+                return res;
+            }
         }
         else if(node.getClass()==A_ArrayLen.class){
-
+            Result arr = interpret(((A_ArrayLen)node).array);
+            if(arr.type.compareTo("int[]") == 0){
+                Result res = new Result();
+                res.type = "int";
+                res.iValue = arr.aValue.length;
+                return res;
+            }
+            else{
+                System.out.println("Incompatible type. Required: 'int[]' Found: " + arr.type);
+                return null;
+            }
         }
 
         else if(node.getClass()==A_IntExp.class){
-
+            int i = ((A_IntExp)node).i;
+            Result res = new Result();
+            res.type = "int";
+            res.iValue = i;
+            return res;
         }
         else if(node.getClass()==A_BoolExp.class){
-
+            boolean b = ((A_BoolExp)node).b;
+            Result res = new Result();
+            res.type = "boolean";
+            res.bValue = b;
+            return res;
         }
         else if(node.getClass()==A_IdExp.class){
 
@@ -224,13 +364,34 @@ public class RuntimeInterpreter {
 
         }
         else if(node.getClass()==A_NewArray.class){
-
+            Result exp = interpret(((A_NewArray)node).exp);
+            if(exp.type.compareTo("int") != 0){
+                System.out.println("About x of 'new int[x]' Incompatible type. " +
+                        "Required: 'int' Found: " + exp.type);
+                return null;
+            }
+            else {
+                Result res = new Result();
+                res.type = "int[]";
+                res.aValue = new int[exp.iValue];
+                return res;
+            }
         }
         else if(node.getClass()==A_NewObj.class){
 
         }
         else if(node.getClass()==A_NotExp.class){
-
+            Result exp = interpret(((A_NotExp)node).exp);
+            Result res = new Result();
+            if(exp.type.compareTo("boolean") == 0){
+                res.type = "boolean";
+                res.bValue = !exp.bValue;
+                return res;
+            }
+            else{
+                System.out.println("Opera '!' cannot be applied to " + exp.type);
+                return null;
+            }
         }
         else{
             return null;//todo: delete this
