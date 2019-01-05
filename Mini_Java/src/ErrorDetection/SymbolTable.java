@@ -146,6 +146,27 @@ public class SymbolTable {
         table[index] = table[index].next;
     }
 
+    public static void insert_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table[i] != null) {
+                table[i] = new bucket(table[i]);
+            }
+        }
+    }
+
+    public static void pop_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table[i] != null && table[i].isNull) {
+                table[i] = table[i].next;
+            }
+            else if(table[i] != null && !table[i].isNull){
+                table[i] = table[i].next.next;
+            }
+        }
+    }
+
     public static void update(String key, int value){
         pop(key);
         insert(key,value);
@@ -172,6 +193,27 @@ public class SymbolTable {
         table_b[index] = table_b[index].next;
     }
 
+    public static void insert_b_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table_b[i] != null) {
+                table_b[i] = new bucket_b(table_b[i]);
+            }
+        }
+    }
+
+    public static void pop_b_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table_b[i] != null && table_b[i].isNull) {
+                table_b[i] = table_b[i].next;
+            }
+            else if(table_b[i] != null && !table_b[i].isNull){
+                table_b[i] = table_b[i].next.next;
+            }
+        }
+    }
+
     public static void update_b(String key, boolean value){
         pop_b(key);
         insert_b(key, value);
@@ -196,6 +238,27 @@ public class SymbolTable {
     public static void pop_a(String key){
         int index = hash(key);
         table_a[index] = table_a[index].next;
+    }
+
+    public static void insert_a_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table_a[i] != null) {
+                table_a[i] = new bucket_a(table_a[i]);
+            }
+        }
+    }
+
+    public static void pop_a_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table_a[i] != null && table_a[i].isNull) {
+                table_a[i] = table_a[i].next;
+            }
+            else if(table_a[i] != null && !table_a[i].isNull){
+                table_a[i] = table_a[i].next.next;
+            }
+        }
     }
 
     public static int[] new_a(int size){
@@ -229,6 +292,27 @@ public class SymbolTable {
         table_c[index] = table_c[index].next;
     }
 
+    public static void insert_c_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table_c[i] != null) {
+                table_c[i] = new bucket_c(table_c[i]);
+            }
+        }
+    }
+
+    public static void pop_c_all() {
+        int i;
+        for(i=0; i<SIZE; i++) {
+            if(table_c[i] != null && table_c[i].isNull) {
+                table_c[i] = table_c[i].next;
+            }
+            else if(table_c[i] != null && !table_c[i].isNull){
+                table_c[i] = table_c[i].next.next;
+            }
+        }
+    }
+
     public static Obj new_c(String t){
         Obj o = new Obj(t);
         return o;
@@ -237,6 +321,20 @@ public class SymbolTable {
     public static void update_c(String key, Obj value){
         pop_c(key);
         insert_c(key,value);
+    }
+
+    public static void table_to_new() {
+        insert_all();
+        insert_a_all();
+        insert_b_all();
+        insert_c_all();
+    }
+
+    public static void table_to_old() {
+        pop_all();
+        pop_a_all();
+        pop_b_all();
+        pop_c_all();
     }
 }
 
