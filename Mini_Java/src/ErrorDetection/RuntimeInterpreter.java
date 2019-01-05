@@ -46,11 +46,6 @@ public class RuntimeInterpreter {
         else if(node.getClass()==A_ClassDec.class){
             //we register vars and methods in ErrorDetector, here we skip
             return null;
-            //Absyn [] varDecs = ((A_ClassDec)node).varDecs;
-            //classvar = true;
-            //for(int i=0;i<varDecs.length;i++){
-            //    interpret(varDecs[i]);
-            // }
         }
         else if(node.getClass()==A_VarDec.class){
             if(!classvar){
