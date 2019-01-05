@@ -48,6 +48,7 @@ public class RuntimeInterpreter {
             return null;
         }
         else if(node.getClass()==A_VarDec.class){
+            //we register class vars in ErrorDetector, here we register local vars
             if(!classvar){
                 Result res = new Result();
                 String id = ((A_VarDec)node).id;
@@ -58,7 +59,13 @@ public class RuntimeInterpreter {
                     case 0:typename="int[]";break;
                     case 1:typename="boolean";break;
                     case 2:typename="int";break;
-                    case 3:break;
+                    case 3:{
+                        if(!SymbolTable.s2tree.containsKey(typename)){
+                            System.err.println("Cannot resolve symbol: "+typename);
+                            return null;
+                        }
+                        break;
+                    }
                     default:
                         System.out.println("Debug: Undefined type: "+cat);
                 }
@@ -83,6 +90,8 @@ public class RuntimeInterpreter {
             Absyn []varDecs = ((A_MethodDec)node).varDecs;
             for(int i=0;i<varDecs.length;i++){
                 Result var = interpret(varDecs[i]);
+                if(var==null)
+                    return null;
                 if(var.type.compareTo("int")==0){
                     SymbolTable.insert(var.id,0);//todo check initialization //hp
                 }
@@ -93,15 +102,14 @@ public class RuntimeInterpreter {
                     SymbolTable.insert_b(var.id,true);
                 }
                 else{
-                    SymbolTable.insert_c(var.id,null);
+                    SymbolTable.insert_c(var.id,null);//todo: insert checks type
                 }
             }
             Absyn []stmts = ((A_MethodDec)node).stmts;
             for(int i=0;i<stmts.length;i++){
                 interpret(stmts[i]);
             }
-            Result res = interpret(((A_MethodDec)node).ret);
-            return res;
+            return interpret(((A_MethodDec)node).ret);
         }
         else if(node.getClass()==A_CallExp.class){
             Result r = interpret(((A_CallExp)node).obj);
