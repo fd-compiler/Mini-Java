@@ -115,7 +115,7 @@ public class SymbolTable {
 
     }
 
-    int hash(String s) {
+    private int hash(String s) {
         int h = 0;
         int i = 0;
         for(; s.charAt(i) != '\0'; i++) {

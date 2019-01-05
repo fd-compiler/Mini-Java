@@ -3,7 +3,7 @@ package ErrorDetection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class obj {
+public class Obj {
     String id;
     InheritanceTree type;
 
@@ -14,18 +14,18 @@ public class obj {
     //todo: to support tracking the fields of the parent, we may need to change this structure
     List<String> field_names;
     List<String> types;
-    List<obj> fields;
+    List<Obj> fields;
 
     public String get_class(){
         return type.id;
     }
 
-    public obj(String id, String ft){
+    public Obj(String id, String ft){
         this.id=id;
         type = SymbolTable.s2tree.get(ft);
     }
 
-    public obj(String id, InheritanceTree type){
+    public Obj(String id, InheritanceTree type){
         this.id = id;
         this.type = type;
         field_names = new ArrayList<>();
@@ -41,7 +41,7 @@ public class obj {
                 String f_type = t.types.get(i);
                 types.add(f_type);
                 if(f_type.compareTo("int")*f_type.compareTo("int[]")*f_type.compareTo("boolean")==0){
-                    fields.add(new obj(temp_id,f_type));
+                    fields.add(new Obj(temp_id,f_type));
                 }
                 else{
                     fields.add(null);
