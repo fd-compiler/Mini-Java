@@ -122,3 +122,11 @@ public class RuntimeInterpreter {
         }
     }
 }
+
+class Result {
+    String type;
+    int iValue;
+    boolean bValue;
+    int []aValue;
+    Obj obj;
+}
