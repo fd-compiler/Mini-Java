@@ -47,7 +47,6 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
     //varDec
     @Override public Absyn visitVarDec(miniJavaParser.VarDecContext ctx) {
-        //todo: insert into symbol table
         Absyn type = visit(ctx.type());
         String id = ctx.ID().getText();
         Absyn varDec = new A_VarDec(type,id);
@@ -124,7 +123,6 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
     //assign
     @Override public Absyn visitAssign(miniJavaParser.AssignContext ctx) {
-        //todo: change value in the table
         String id = ctx.ID().getText();
         Absyn exp = visit(ctx.expression());
         Absyn assign = new A_Assign(id, exp);
@@ -133,7 +131,6 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
     //assign array
     @Override public Absyn visitAssignArray(miniJavaParser.AssignArrayContext ctx) {
-        //todo: change value in the table
         String id = ctx.ID().getText();
         Absyn index = visit(ctx.expression(0));
         Absyn value = visit(ctx.expression(1));
@@ -176,7 +173,6 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
     //this
     @Override public Absyn visitThis(miniJavaParser.ThisContext ctx) {
-        //todo: implement 'this'
         Absyn this_node = new A_This();
         return this_node;
     }
@@ -190,7 +186,6 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
     //new array
     @Override public Absyn visitNewArray(miniJavaParser.NewArrayContext ctx) {
-        //todo: implement new array
         Absyn exp = visit(ctx.expression());
         Absyn newArray = new A_NewArray(exp);
         return newArray;
@@ -243,7 +238,6 @@ public class astGenerator extends miniJavaBaseVisitor<Absyn> {
 
     //expression -> ID
     @Override public Absyn visitId(miniJavaParser.IdContext ctx) {
-        //todo: check the symbol table
         String id = ctx.ID().getText();
         Absyn id_node = new A_IdExp(id);
         return id_node;

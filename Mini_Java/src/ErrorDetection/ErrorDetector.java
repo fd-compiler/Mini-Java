@@ -165,7 +165,6 @@ public class ErrorDetector {
             return 0;
         }
         else if(node.getClass()==A_Print.class){
-            //todo: check whether int during runtime
             recursiveCheck(((A_Print)node).exp);
             return 0;
         }
