@@ -77,8 +77,14 @@ public class RuntimeInterpreter {
                     return res;
                 }
                 else{
-                    System.out.println("About '&&': Incompatible type. Required: 'boolean' Found: " +
-                            res_l.type + "and " + res_r.type);
+                    if(res_l.type.compareTo("boolean") != 0){
+                        System.out.println("About left of '&&': Incompatible type. " +
+                                "Required: 'boolean' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("boolean") != 0){
+                        System.out.println("About right of '&&': Incompatible type. " +
+                                "Required: 'boolean' Found: " + res_r.type );
+                    }
                     return null;
                 }
             }
@@ -90,8 +96,14 @@ public class RuntimeInterpreter {
                    return res;
                }
                else{
-                   System.out.println("About '-': Incompatible type. Required: 'int' Found: " +
-                           res_l.type + "and " + res_r.type);
+                   if(res_l.type.compareTo("int") != 0){
+                       System.out.println("About left of '-': Incompatible type. " +
+                               "Required: 'int' Found: " + res_l.type );
+                   }
+                   if(res_r.type.compareTo("int") != 0){
+                       System.out.println("About right of '-': Incompatible type. " +
+                               "Required: 'int' Found: " + res_r.type );
+                   }
                    return null;
                }
             }
@@ -103,8 +115,14 @@ public class RuntimeInterpreter {
                     return res;
                 }
                 else{
-                    System.out.println("About '+': Incompatible type. Required: 'int' Found: " +
-                            res_l.type + "and " + res_r.type);
+                    if(res_l.type.compareTo("int") != 0){
+                        System.out.println("About left of '+': Incompatible type. " +
+                                "Required: 'int' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("int") != 0){
+                        System.out.println("About right of '+': Incompatible type. " +
+                                "Required: 'int' Found: " + res_r.type );
+                    }
                     return null;
                 }
             }
@@ -116,8 +134,14 @@ public class RuntimeInterpreter {
                     return res;
                 }
                 else{
-                    System.out.println("About '*': Incompatible type. Required: 'int' Found: " +
-                            res_l.type + "and " + res_r.type);
+                    if(res_l.type.compareTo("int") != 0){
+                        System.out.println("About left of '*': Incompatible type. " +
+                                "Required: 'int' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("int") != 0){
+                        System.out.println("About right of '*': Incompatible type. " +
+                                "Required: 'int' Found: " + res_r.type );
+                    }
                     return null;
                 }
             }
@@ -129,8 +153,14 @@ public class RuntimeInterpreter {
                     return res;
                 }
                 else{
-                    System.out.println("About '<': Incompatible type. Required: 'int' Found: " +
-                            res_l.type + "and " + res_r.type);
+                    if(res_l.type.compareTo("int") != 0){
+                        System.out.println("About left of '<': Incompatible type. " +
+                                "Required: 'int' Found: " + res_l.type );
+                    }
+                    if(res_r.type.compareTo("int") != 0){
+                        System.out.println("About right of '<': Incompatible type. " +
+                                "Required: 'int' Found: " + res_r.type );
+                    }
                     return null;
                 }
             }
