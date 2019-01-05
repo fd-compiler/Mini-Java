@@ -162,7 +162,12 @@ public class SymbolTable {
                 table[i] = table[i].next;
             }
             else if(table[i] != null && !table[i].isNull){
-                table[i] = table[i].next.next;
+                if(table[i].next != null && table[i].next.isNull) {
+                    table[i] = table[i].next.next;
+                }
+                else{
+                    table[i] = table[i].next;
+                }
             }
         }
     }
@@ -208,8 +213,13 @@ public class SymbolTable {
             if(table_b[i] != null && table_b[i].isNull) {
                 table_b[i] = table_b[i].next;
             }
-            else if(table_b[i] != null && !table_b[i].isNull){
-                table_b[i] = table_b[i].next.next;
+            else if(table_b[i] != null && !table_b[i].next.isNull){
+                if(table_b[i].next != null) {
+                    table_b[i] = table_b[i].next.next;
+                }
+                else{
+                    table_b[i] = table_b[i].next;
+                }
             }
         }
     }
@@ -256,7 +266,12 @@ public class SymbolTable {
                 table_a[i] = table_a[i].next;
             }
             else if(table_a[i] != null && !table_a[i].isNull){
-                table_a[i] = table_a[i].next.next;
+                if(table_a[i].next != null && table_a[i].next.isNull) {
+                    table_a[i] = table_a[i].next.next;
+                }
+                else{
+                    table_a[i] = table_a[i].next;
+                }
             }
         }
     }
@@ -308,7 +323,12 @@ public class SymbolTable {
                 table_c[i] = table_c[i].next;
             }
             else if(table_c[i] != null && !table_c[i].isNull){
-                table_c[i] = table_c[i].next.next;
+                if(table_c[i].next != null && table_c[i].next.isNull) {
+                    table_c[i] = table_c[i].next.next;
+                }
+                else{
+                    table_c[i] = table_c[i].next;
+                }
             }
         }
     }
