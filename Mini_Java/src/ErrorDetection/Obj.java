@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Obj {
-    //String id;
-    InheritanceTree type;
+    InheritanceTree tree;
+    String type;
 
     int iValue;
     boolean bValue;
@@ -17,26 +17,17 @@ public class Obj {
     List<Obj> fields;
 
     public String get_class(){
-        return type.id;
+        return tree.id;
     }
 
-    public Obj(String ft){
-        type = SymbolTable.s2tree.get(ft);
-    }
-
-    public Obj(String id, String ft){
-        //this.id=id;
-        type = SymbolTable.s2tree.get(ft);
-    }
-
-    public Obj(String id, InheritanceTree type){
-        //this.id = id;
-        this.type = type;
+    public Obj(InheritanceTree tree){
+        this.tree = tree;
+        type=tree.id;
         field_names = new ArrayList<>();
         types = new ArrayList<>();
         fields = new ArrayList<>();
 
-        InheritanceTree t = type;
+        InheritanceTree t = tree;
         //todo: here we do not care parent, now we don't loop
         while(t!=null){
             for(int i=0;i<t.types.size();i++){
@@ -44,12 +35,7 @@ public class Obj {
                 field_names.add(temp_id);
                 String f_type = t.types.get(i);
                 types.add(f_type);
-                if(f_type.compareTo("int")*f_type.compareTo("int[]")*f_type.compareTo("boolean")==0){
-                    fields.add(new Obj(temp_id,f_type));
-                }
-                else{
-                    fields.add(null);
-                }
+                fields.add(new Obj(SymbolTable.s2tree.get(f_type)));
             }
             t=t.parent;
             break; //todo: do not loop now

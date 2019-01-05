@@ -13,11 +13,11 @@ public class InheritanceTree {
     // int[] "int[]"
     // boolean "boolean"
     // id id
-    List<String> types;
-    List<String> field_names;
+    List<String> types= new ArrayList<>();
+    List<String> field_names= new ArrayList<>();
 
-    List<String> methods;
-    List<Absyn> nodes;
+    List<String> methods= new ArrayList<>();
+    List<Absyn> nodes= new ArrayList<>();
 
     InheritanceTree(String id){
         define=true;
@@ -27,10 +27,6 @@ public class InheritanceTree {
     InheritanceTree(String id, InheritanceTree parent){
         this.id=id;
         this.parent=parent;
-        field_names = new ArrayList<>();
-        types = new ArrayList<>();
-        methods = new ArrayList<>();
-        nodes = new ArrayList<>();
     }
 
     void append_field(String n,int cat,String t){

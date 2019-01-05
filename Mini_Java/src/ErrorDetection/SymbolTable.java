@@ -118,7 +118,7 @@ public class SymbolTable {
     private static int hash(String s) {
         int h = 0;
         int i = 0;
-        for(; s.charAt(i) != '\0'; i++) {
+        for(; i<s.length(); i++) {
             h = (h * 65599 + s.charAt(i))%SIZE; //ljl: 加入了取模
         }
         return h;
@@ -139,6 +139,11 @@ public class SymbolTable {
     public static void insert(String key, int binding) {
         int index = hash(key);
         table[index] =  new bucket(key, binding, table[index]);
+    }
+
+    public static void insert_not_initial(String key){
+        int index = hash(key);
+        table[index] = new bucket(key,table[index]);
     }
 
     public static void pop(String key) {
@@ -186,6 +191,11 @@ public class SymbolTable {
     public static void insert_b(String key, boolean binding){
         int index = hash(key);
         table_b[index] =  new bucket_b(key, binding, table_b[index]);
+    }
+
+    public static void insert_b_not_initial(String key){
+        int index = hash(key);
+        table_b[index]=new bucket_b(key,table_b[index]);
     }
 
     public static void pop_b(String key){
@@ -282,9 +292,9 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
-    public static void insert_c(String key, Obj binding){
+    public static void insert_c(String key, String type){
         int index = hash(key);
-        table_c[index] = new bucket_c(key, binding, table_c[index]);
+        table_c[index] = new bucket_c(key, type, table_c[index]);
     }
 
     public static void pop_c(String key){
@@ -314,13 +324,65 @@ public class SymbolTable {
     }
 
     public static Obj new_c(String t){
-        Obj o = new Obj(t);
-        return o;
+        //todo;
+        return null;
     }
 
     public static void update_c(String key, Obj value){
-        pop_c(key);
-        insert_c(key,value);
+        int index = hash(key);
+        table_c[index].binding=value;
+    }
+
+    public static Card findVariable(String key){
+        Card card = new Card();
+        card.isIn=false;
+        card.isInitial=false;
+        int index = hash(key);
+        if(table[index]!=null&&(!table[index].isNull)){
+            if(table[index].key.compareTo(key)==0){
+                card.type="int";
+                card.isIn=true;
+                card.isInitial = table[index].isInitial;
+                if(card.isInitial){
+                    card.iValue=table[index].binding;
+                }
+                return card;
+            }
+        }
+        else if(table_b[index]!=null&&(!table_b[index].isNull)){
+            if(table_b[index].key.compareTo(key)==0) {
+                card.type = "boolean";
+                card.isIn = true;
+                card.isInitial = table_b[index].isInitial;
+                if (card.isInitial) {
+                    card.bValue = table_b[index].binding;
+                }
+                return card;
+            }
+        }
+        else if(table_a[index]!=null&&(!table_a[index].isNull)){
+            if(table_a[index].key.compareTo(key)==0){
+                card.type="int[]";
+                card.isIn=true;
+                card.isInitial = table_a[index].binding!=null;
+                if(card.isInitial){
+                    card.aValue=table_a[index].binding;
+                }
+                return card;
+            }
+        }
+        else if(table_c[index]!=null&&(!table_c[index].isNull)){
+            if(table_c[index].key.compareTo(key)==0){
+                card.type=table_c[index].type;
+                card.isIn =true;
+                card.isInitial = table_c[index].binding!=null;
+                if(card.isInitial){
+                    card.obj=table_c[index].binding;
+                }
+                return card;
+            }
+        }
+        return card;
     }
 
     public static void table_to_new() {
@@ -343,16 +405,23 @@ class bucket {
     int binding;
     bucket next;
     boolean isNull;
+    boolean isInitial;
 
     bucket(bucket next){
         isNull=true;
         this.next=next;
+    }
+    bucket(String key, bucket next){
+        this.key=key;
+        this.next=next;
+        isInitial=false;
     }
     bucket(String key, int binding, bucket next) {
         this.key = key;
         this.binding = binding;
         this.next = next;
         isNull=false;
+        isInitial=true;
     }
 }
 
@@ -361,16 +430,23 @@ class bucket_b {
     boolean binding;
     bucket_b next;
     boolean isNull;
+    boolean isInitial;
 
     bucket_b(bucket_b next){
         isNull=true;
         this.next=next;
+    }
+    bucket_b(String key, bucket_b next){
+        this.key=key;
+        this.next=next;
+        isInitial=false;
     }
     bucket_b(String key, boolean binding, bucket_b next) {
         this.key = key;
         this.binding = binding;
         this.next = next;
         isNull=false;
+        isInitial = true;
     }
 }
 
@@ -396,6 +472,7 @@ class bucket_a {
 class bucket_c {
     String key;
     Obj binding;
+    String type;
     bucket_c next;
     boolean isNull;
 
@@ -403,10 +480,22 @@ class bucket_c {
         isNull=true;
         this.next=next;
     }
-    bucket_c(String key, Obj binding, bucket_c next){
+    bucket_c(String key, String type, bucket_c next){
         this.key=key;
-        this.binding=binding;
+        this.type=type;
         this.next=next;
         isNull=false;
     }
+}
+
+class Card {
+    boolean isIn;
+    String type;
+    boolean isInitial;
+
+    int iValue;
+    boolean bValue;
+    int[] aValue;
+    Obj obj;
+
 }

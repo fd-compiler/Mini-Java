@@ -63,7 +63,6 @@ public class ErrorDetector {
     }
 
     public int recursiveCheck(Absyn node){
-        System.out.println(node.getClass().toString());
         if(node.getClass()==A_Goal.class){
             //the root
             recursiveCheck(((A_Goal)node).a_main);
