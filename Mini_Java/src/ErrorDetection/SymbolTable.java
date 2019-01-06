@@ -6,12 +6,12 @@ import java.util.Map;
 
 public class SymbolTable {
     private static final int SIZE = 1000;
-    public static bucket[] table = new bucket[SIZE];       // used for int
-    public static bucket_b[] table_b = new bucket_b[SIZE]; // used for boolean
-    public static bucket_a[] table_a = new bucket_a[SIZE]; // used for array
-    public static bucket_c[] table_c = new bucket_c[SIZE]; // used for objects
+    private static bucket[] table = new bucket[SIZE];       // used for int
+    private static bucket_b[] table_b = new bucket_b[SIZE]; // used for boolean
+    private static bucket_a[] table_a = new bucket_a[SIZE]; // used for array
+    private static bucket_c[] table_c = new bucket_c[SIZE]; // used for objects
 
-    public static Map<String, InheritanceTree> s2tree = new HashMap<>();
+    static Map<String, InheritanceTree> s2tree = new HashMap<>();
 
     static{
         InheritanceTree t_int = new InheritanceTree("int");
@@ -22,7 +22,7 @@ public class SymbolTable {
         s2tree.put("boolean",t_bool);
     }
 
-    public static void checkNullClass() throws ClassRegisterException{
+    static void checkNullClass() throws ClassRegisterException{
         Iterator<String> iterator = s2tree.keySet().iterator();
         while(iterator.hasNext()){
             InheritanceTree temp_tree = s2tree.get(iterator.next());
@@ -40,7 +40,7 @@ public class SymbolTable {
             checkNullClass();
         }
         catch (ClassRegisterException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
 
         Iterator<String> iterator = s2tree.keySet().iterator();
@@ -56,7 +56,7 @@ public class SymbolTable {
         }
     }
 
-    public static void registerClass(String id, String parent) throws ClassRegisterException{
+    static void registerClass(String id, String parent) throws ClassRegisterException{
         if(parent==null){
             if(s2tree.containsKey(id)){
                 if(s2tree.get(id).define){
@@ -115,7 +115,7 @@ public class SymbolTable {
 
     }
 
-    public static int hash(String s) {
+    private static int hash(String s) {
         int h = 0;
         int i = 0;
         for(; i<s.length(); i++) {
@@ -136,22 +136,22 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
-    public static void insert(String key, int binding) {
+    static void insert(String key, int binding) {
         int index = hash(key);
         table[index] =  new bucket(key, binding, table[index]);
     }
 
-    public static void insert_not_initial(String key){
+    static void insert_not_initial(String key){
         int index = hash(key);
         table[index] = new bucket(key,table[index]);
     }
 
-    public static void pop(String key) {
+    private static void pop(String key) {
         int index = hash(key);
         table[index] = table[index].next;
     }
 
-    public static void insert_all() {
+    private static void insert_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table[i] != null) {
@@ -160,7 +160,7 @@ public class SymbolTable {
         }
     }
 
-    public static void pop_all() {
+    private static void pop_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table[i] != null && table[i].isNull) {
@@ -177,7 +177,7 @@ public class SymbolTable {
         }
     }
 
-    public static void update(String key, int value){
+    static void update(String key, int value){
         pop(key);
         insert(key,value);
     }
@@ -193,22 +193,22 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
-    public static void insert_b(String key, boolean binding){
+    static void insert_b(String key, boolean binding){
         int index = hash(key);
         table_b[index] =  new bucket_b(key, binding, table_b[index]);
     }
 
-    public static void insert_b_not_initial(String key){
+    static void insert_b_not_initial(String key){
         int index = hash(key);
         table_b[index]=new bucket_b(key,table_b[index]);
     }
 
-    public static void pop_b(String key){
+    private static void pop_b(String key){
         int index = hash(key);
         table_b[index] = table_b[index].next;
     }
 
-    public static void insert_b_all() {
+    private static void insert_b_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table_b[i] != null) {
@@ -217,7 +217,7 @@ public class SymbolTable {
         }
     }
 
-    public static void pop_b_all() {
+    private static void pop_b_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table_b[i] != null && table_b[i].isNull) {
@@ -234,12 +234,12 @@ public class SymbolTable {
         }
     }
 
-    public static void update_b(String key, boolean value){
+    static void update_b(String key, boolean value){
         pop_b(key);
         insert_b(key, value);
     }
 
-    public static int[] lookup_a(String key) throws UndefinedIdException{
+    static int[] lookup_a(String key) throws UndefinedIdException{
         int index = hash(key);
         bucket_a b;
         for(b = table_a[index]; b != null; b = b.next) {
@@ -250,17 +250,17 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
-    public static void insert_a(String key, int[] binding){
+    static void insert_a(String key, int[] binding){
         int index = hash(key);
         table_a[index] =  new bucket_a(key, binding, table_a[index]);
     }
 
-    public static void pop_a(String key){
+    private static void pop_a(String key){
         int index = hash(key);
         table_a[index] = table_a[index].next;
     }
 
-    public static void insert_a_all() {
+    private static void insert_a_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table_a[i] != null) {
@@ -269,7 +269,7 @@ public class SymbolTable {
         }
     }
 
-    public static void pop_a_all() {
+    private static void pop_a_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table_a[i] != null && table_a[i].isNull) {
@@ -286,12 +286,8 @@ public class SymbolTable {
         }
     }
 
-    public static int[] new_a(int size){
-        int []w = new int[size];
-        return w;
-    }
 
-    public static void update_a(String key, int[] value){
+    static void update_a(String key, int[] value){
         pop_a(key);
         insert_a(key, value);
     }
@@ -307,7 +303,7 @@ public class SymbolTable {
         throw new UndefinedIdException(key);
     }
 
-    public static void insert_c(String key, String type){
+    static void insert_c(String key, String type){
         int index = hash(key);
         table_c[index] = new bucket_c(key, type, table_c[index]);
     }
@@ -317,7 +313,7 @@ public class SymbolTable {
         table_c[index] = table_c[index].next;
     }
 
-    public static void insert_c_all() {
+    private static void insert_c_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table_c[i] != null) {
@@ -326,7 +322,7 @@ public class SymbolTable {
         }
     }
 
-    public static void pop_c_all() {
+    private static void pop_c_all() {
         int i;
         for(i=0; i<SIZE; i++) {
             if(table_c[i] != null && table_c[i].isNull) {
@@ -343,17 +339,12 @@ public class SymbolTable {
         }
     }
 
-    public static Obj new_c(String t){
-        //todo;
-        return null;
-    }
-
-    public static void update_c(String key, Obj value){
+    static void update_c(String key, Obj value){
         int index = hash(key);
         table_c[index].binding=value;
     }
 
-    public static Card findVariable(String key){
+    static Card findVariable(String key){
         Card card = new Card();
         card.isIn=false;
         card.isInitial=false;
@@ -405,14 +396,14 @@ public class SymbolTable {
         return card;
     }
 
-    public static void table_to_new() {
+    static void table_to_new() {
         insert_all();
         insert_a_all();
         insert_b_all();
         insert_c_all();
     }
 
-    public static void table_to_old() {
+    static void table_to_old() {
         pop_all();
         pop_a_all();
         pop_b_all();

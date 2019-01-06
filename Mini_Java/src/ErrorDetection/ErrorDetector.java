@@ -108,7 +108,6 @@ public class ErrorDetector {
                 temp_tree.append_field(id,cat,typename);
             }
             return 0;
-            //todo: check vardec in method during runtime
         }
         else if(node.getClass()==A_MethodDec.class){
             String id = ((A_MethodDec)node).id;
@@ -169,13 +168,10 @@ public class ErrorDetector {
             return 0;
         }
         else if(node.getClass()==A_Assign.class){
-            //todo: check id in the symbol table during runtime
             recursiveCheck(((A_Assign)node).exp);
             return 0;
         }
         else if(node.getClass()==A_AssignArray.class){
-            //todo: check id in the symbol table during runtime
-            //todo: check index out of range during runtime
             recursiveCheck(((A_AssignArray)node).index);
             recursiveCheck(((A_AssignArray)node).value);
             return 0;
@@ -195,7 +191,6 @@ public class ErrorDetector {
             return 0;
         }
         else if(node.getClass()==A_CallExp.class){
-            //todo: check whether this method exists
             Absyn []absyns = ((A_CallExp)node).paras;
             recursiveCheck(((A_CallExp)node).obj);
             for(int i=0;i<absyns.length;i++){

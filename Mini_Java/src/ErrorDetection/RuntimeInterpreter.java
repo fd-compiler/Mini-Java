@@ -106,7 +106,7 @@ public class RuntimeInterpreter {
                     SymbolTable.insert_b_not_initial(var.id);
                 }
                 else{
-                    SymbolTable.insert_c(var.id,var.type);//todo: insert checks type
+                    SymbolTable.insert_c(var.id,var.type);
                 }
             }
             Absyn []stmts = ((A_MethodDec)node).stmts;
@@ -174,11 +174,11 @@ public class RuntimeInterpreter {
                 currentObj = r.obj;
                 currentObj.isInitial=true;
                 currentClass = r.obj.tree.id;
-                SymbolTable.table_to_new(); //todo:delete locals
+                SymbolTable.table_to_new(); // enter new scope
                 //pass parameters
                 for(int i=0;i<temp_res.length;i++){
                     if(temp_res[i].type.compareTo("int")==0){
-                        SymbolTable.insert(pnames[i],temp_res[i].iValue);//todo: check every insert into table, caution uninitialized variable
+                        SymbolTable.insert(pnames[i],temp_res[i].iValue);
                     }
                     else if(temp_res[i].type.compareTo("int[]")==0){
                         SymbolTable.insert_a(pnames[i],temp_res[i].aValue);
@@ -192,7 +192,7 @@ public class RuntimeInterpreter {
                 }
                 //give control to method
                 Result res = interpret(temp_node);
-                SymbolTable.table_to_old();    //todo: restore locals
+                SymbolTable.table_to_old(); // leave this scope
                 currentClass=classStack.get(classStack.size()-1);
                 currentObj=objStack.get(objStack.size()-1);
                 classStack.remove(classStack.size()-1);
@@ -259,14 +259,11 @@ public class RuntimeInterpreter {
             Result res = interpret(((A_Assign)node).exp);
             if(res==null)
                 return null;
-            //todo: initialized //hp
             Card card = SymbolTable.findVariable(id);
             if(!card.isIn){
                 List<String> list = SymbolTable.s2tree.get(currentClass).field_names;
                 if(list.contains(id)){
                     String typename = SymbolTable.s2tree.get(currentClass).types.get(list.indexOf(id));
-                    //todo: where to define current obj
-                    //todo: where to define current class
                     if(res.type.compareTo(typename)!=0){
                         System.err.println("Incompatible types. Required: '"+ typename+"' Found: "+res.type);
                     }else{
@@ -603,7 +600,6 @@ public class RuntimeInterpreter {
         if(!card.isIn){
             List<String> list = SymbolTable.s2tree.get(currentClass).field_names;
             if(list.contains(id)){
-                //todo: class var initialized ?
                 res.type = SymbolTable.s2tree.get(currentClass).types.get(list.indexOf(id));
                 Obj obj = currentObj.fields.get(currentObj.field_names.indexOf(id));
                 if(!obj.isInitial){
@@ -626,7 +622,6 @@ public class RuntimeInterpreter {
             }
             else{
                 System.err.println("Cannot resolve symbol: "+id);
-                bucket b = SymbolTable.table[SymbolTable.hash(id)];
                 return null;
             }
         }

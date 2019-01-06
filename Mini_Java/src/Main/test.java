@@ -1,4 +1,4 @@
-package AbstractSyntax;
+package Main;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.CommonTokenStream;
