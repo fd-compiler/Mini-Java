@@ -205,6 +205,8 @@ public class RuntimeInterpreter {
         else if(node.getClass()==A_If.class){
             //if statement
             Result res = interpret(((A_If)node).exp);
+            if(res==null)
+                return null;
             if(res.type.compareTo("boolean")!=0){
                 System.err.println("Incompatible types, Required: boolean, Found: "+res.type);
             }
@@ -219,26 +221,35 @@ public class RuntimeInterpreter {
         else if(node.getClass()==A_While.class){
             //while statement
             Result res = interpret(((A_While)node).exp);
+            if(res==null)
+                return null;
             if (res.type.compareTo("boolean") != 0) {
                 System.err.println("Incompatible types. Required: 'boolean', Found: "+res.type);
+                return null;
             }
             while(res.bValue){
                 interpret(((A_While)node).stmt);
                 res = interpret(((A_While)node).exp);
             }
+            return null;
         }
         else if(node.getClass()==A_Print.class){
             //print statement
             Result res = interpret(((A_Print)node).exp);
+            if(res==null)
+                return null;
             if(res.type.compareTo("int")!=0){
                 System.err.println("Incompatible types. Required: 'int', Found: "+res.type);
             }else{
                 System.out.println(res.iValue);
             }
+            return null;
         }
         else if(node.getClass()==A_Assign.class){
             String id = ((A_Assign)node).id;
             Result res = interpret(((A_Assign)node).exp);
+            if(res==null)
+                return null;
             //todo: initialized //hp
             Card card = SymbolTable.findVariable(id);
             if(!card.isIn){
@@ -250,7 +261,19 @@ public class RuntimeInterpreter {
                     if(res.type.compareTo(typename)!=0){
                         System.err.println("Incompatible types. Required: '"+ typename+"' Found: "+res.type);
                     }else{
-                        currentObj.fields.set(currentObj.field_names.indexOf(id),res.obj);
+                        if(res.type.compareTo("int")==0){
+                            currentObj.fields.get(currentObj.field_names.indexOf(id)).iValue = res.iValue;
+                            currentObj.fields.get(currentObj.field_names.indexOf(id)).isInitial=true;
+                        }else if(res.type.compareTo("int[]")==0){
+                            currentObj.fields.get(currentObj.field_names.indexOf(id)).aValue = res.aValue;
+                            currentObj.fields.get(currentObj.field_names.indexOf(id)).isInitial=true;
+                        }else if(res.type.compareTo("boolean")==0){
+                            currentObj.fields.get(currentObj.field_names.indexOf(id)).bValue = res.bValue;
+                            currentObj.fields.get(currentObj.field_names.indexOf(id)).isInitial=true;
+                        }else{
+                            currentObj.fields.set(currentObj.field_names.indexOf(id),res.obj);
+                            currentObj.fields.get(currentObj.field_names.indexOf(id)).isInitial=true;
+                        }
                     }
                 }
                 else{
@@ -276,25 +299,53 @@ public class RuntimeInterpreter {
             return null;
         }
         else if(node.getClass()==A_AssignArray.class){
-            //assign array
             String id = ((A_AssignArray)node).id;
-            Result r_id = fetchID(id);
-            if(r_id==null)
-                return null;
             Result r_index = interpret(((A_AssignArray)node).index);
             Result r_value = interpret(((A_AssignArray)node).value);
-            if(r_index==null||r_value==null)
-                return null;
-            if(r_id.type.compareTo("int[]")!=0){
-                System.err.println("Incompatible types when assigning element in array. Required: 'int[]' ");
+            if(r_index.type.compareTo("int")!=0){
+                System.err.println("About y of 'x[y]': Incompatible types. Required: 'int' Found: "+r_value.type);
                 return null;
             }
-            if((r_index.type.compareTo("int")!=0)||(r_value.type.compareTo("int")!=0)){
-                System.err.println("Incompatible types when assigning element in array. Required: 'int' ");
+            if(r_value.type.compareTo("int")!=0){
+                System.err.println("Incompatible types. Required: 'int' Found: "+r_value.type);
                 return null;
             }
-            r_id.aValue[r_index.iValue]=r_value.iValue;
-            return null;
+            try{
+                int []a = SymbolTable.lookup_a(id);
+                if(a==null){
+                    System.err.println("NullPointerException: "+id);
+                    return null;
+                }
+                if(a.length<=r_index.iValue){
+                    System.err.println("ArrayIndexOutOfBoundsException: "+id+"["+r_index.iValue+"]");
+                    return null;
+                }
+                a[r_index.iValue]=r_value.iValue;
+                return null;
+            }
+            catch (UndefinedIdException e){
+                if(SymbolTable.s2tree.get(currentClass).field_names.contains(id)){
+                    int idx = SymbolTable.s2tree.get(currentClass).field_names.indexOf(id);
+                    Obj tempObj = currentObj.fields.get(idx);
+                    if(tempObj.type.compareTo("int[]")!=0){
+                        System.err.println("Opera '[]' cannot be applied to "+tempObj.type);
+                        return null;
+                    }
+                    if(tempObj.aValue==null){
+                        System.err.println("NullPointerException: "+id);
+                        return null;
+                    }
+                    if(tempObj.aValue.length<=r_index.iValue){
+                        System.err.println("ArrayIndexOutOfBoundsException: "+id+"["+r_index.iValue+"]");
+                        return null;
+                    }
+                    tempObj.aValue[r_index.iValue]=r_value.iValue;
+                }
+                else{
+                    System.err.println("Cannot resolve symbol: "+id);
+                }
+                return null;
+            }
         }
         else if(node.getClass()==A_OpExp.class){
             A_Oper oper = ((A_OpExp)node).oper;
