@@ -68,6 +68,7 @@ public class RuntimeInterpreter {
                     }
                     default:
                         System.out.println("Debug: Undefined type: "+cat);
+                        return null;
                 }
                 res.type=typename;
                 res.id = id; //u82jew
@@ -116,13 +117,14 @@ public class RuntimeInterpreter {
         else if(node.getClass()==A_CallExp.class){
             Result r = interpret(((A_CallExp)node).obj);
             String m = ((A_CallExp)node).method;
+            if(r==null)
+                return null;
             if(r.isBase()){
                 System.err.println("Cannot resolve symbol: "+m);
                 return null;//todo: null: check every interpret call
             }
-            if(r.obj==null){
-                //u82jew
-                System.err.println("Variable "+r.id+" might not have been initialized");//todo: might be wrong
+            if(!r.obj.isInitial){
+                System.err.println("Variable "+r.obj.type+" might not have been initialized");
                 return null;
             }
             if(!r.obj.tree.methods.contains(m)){
@@ -138,7 +140,10 @@ public class RuntimeInterpreter {
                 Absyn []call_p = ((A_CallExp)node).paras;
                 Result []temp_res = new Result[call_p.length];
                 for(int i=0;i<call_p.length;i++){
-                    temp_res[i] = interpret(call_p[i]);
+                    Result interpret_res = interpret(call_p[i]);
+                    if(interpret_res==null)
+                        return null;
+                    temp_res[i] = interpret_res;
                 }
                 if(absyns.length!=((A_CallExp)node).paras.length){
                     System.err.print(m+" in "+temp_tree.id+" cannot be applied to (");
@@ -168,7 +173,7 @@ public class RuntimeInterpreter {
                 objStack.add(currentObj);
                 currentObj = r.obj;
                 currentClass = r.obj.tree.id;
-                //todo:delete locals
+                SymbolTable.table_to_new(); //todo:delete locals
                 //pass parameters
                 for(int i=0;i<temp_res.length;i++){
                     if(temp_res[i].type.compareTo("int")==0){
@@ -186,7 +191,7 @@ public class RuntimeInterpreter {
                 }
                 //give control to method
                 Result res = interpret(temp_node);
-                //todo: restore locals
+                SymbolTable.table_to_old();    //todo: restore locals
                 currentClass=classStack.get(classStack.size()-1);
                 currentObj=objStack.get(objStack.size()-1);
                 classStack.remove(classStack.size()-1);
@@ -230,6 +235,8 @@ public class RuntimeInterpreter {
             while(res.bValue){
                 interpret(((A_While)node).stmt);
                 res = interpret(((A_While)node).exp);
+                if(res==null)
+                    return null;
             }
             return null;
         }
@@ -246,6 +253,7 @@ public class RuntimeInterpreter {
             return null;
         }
         else if(node.getClass()==A_Assign.class){
+            //assign
             String id = ((A_Assign)node).id;
             Result res = interpret(((A_Assign)node).exp);
             if(res==null)
@@ -299,9 +307,12 @@ public class RuntimeInterpreter {
             return null;
         }
         else if(node.getClass()==A_AssignArray.class){
+            //assign array
             String id = ((A_AssignArray)node).id;
             Result r_index = interpret(((A_AssignArray)node).index);
             Result r_value = interpret(((A_AssignArray)node).value);
+            if(r_index==null||r_value==null)
+                return null;
             if(r_index.type.compareTo("int")!=0){
                 System.err.println("About y of 'x[y]': Incompatible types. Required: 'int' Found: "+r_value.type);
                 return null;
@@ -353,6 +364,10 @@ public class RuntimeInterpreter {
             Absyn right = ((A_OpExp)node).right;
             Result res_l = interpret(left);
             Result res_r = interpret(right);
+
+            if(res_l==null||res_r==null)
+                return null;
+
             Result res = new Result();
             if(oper == A_Oper.and){
                 if(res_l.type.compareTo("boolean") == 0 &&
@@ -448,6 +463,10 @@ public class RuntimeInterpreter {
                     }
                     return null;
                 }
+            }
+            else{
+                System.out.println("Debug: should never come to this point");
+                return null;
             }
         }
         else if(node.getClass()==A_ArrayIndex.class){
@@ -569,9 +588,9 @@ public class RuntimeInterpreter {
             }
         }
         else{
-            return null;//todo: delete this
+            System.out.println("Debug: should never come to this point");
+            return null;
         }
-        return null;
     }
     public Result fetchID(String id){
         Result res = new Result();
