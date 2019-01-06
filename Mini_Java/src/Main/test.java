@@ -1,5 +1,6 @@
 package Main;
 
+import Visualization.AbsynViewer;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.CharStream;
@@ -20,6 +21,8 @@ public class test {
         //miniJavaBaseVisitor<Integer> eval = new miniJavaBaseVisitor<>();
         astGenerator eval = new astGenerator();
         eval.visit(tree);
+        AbsynViewer viewer = new AbsynViewer(eval.root);
+        viewer.view(false);
         ErrorDetector detector = new ErrorDetector(eval.root);
         detector.checkClasses();
         detector.recursiveCheck();
