@@ -223,8 +223,8 @@ public class SymbolTable {
             if(table_b[i] != null && table_b[i].isNull) {
                 table_b[i] = table_b[i].next;
             }
-            else if(table_b[i] != null && !table_b[i].next.isNull){
-                if(table_b[i].next != null) {
+            else if(table_b[i] != null && !table_b[i].isNull){
+                if(table_b[i].next != null && !table_b[i].next.isNull) {
                     table_b[i] = table_b[i].next.next;
                 }
                 else{
