@@ -39,6 +39,7 @@ public class RuntimeInterpreter {
             String id = ((A_MainClass)node).id;
             currentClass=id;
             currentObj= new Obj(SymbolTable.s2tree.get(id));
+            currentObj.isInitial=true;
             Absyn stmt = ((A_MainClass)node).stmt;
             interpret(stmt);
             return null;
@@ -124,7 +125,6 @@ public class RuntimeInterpreter {
                 return null;//todo: null: check every interpret call
             }
             if(!r.obj.isInitial){
-                System.err.println("Variable "+r.obj.type+" might not have been initialized");
                 return null;
             }
             if(!r.obj.tree.methods.contains(m)){
@@ -172,6 +172,7 @@ public class RuntimeInterpreter {
                 classStack.add(currentClass);
                 objStack.add(currentObj);
                 currentObj = r.obj;
+                currentObj.isInitial=true;
                 currentClass = r.obj.tree.id;
                 SymbolTable.table_to_new(); //todo:delete locals
                 //pass parameters
@@ -338,6 +339,9 @@ public class RuntimeInterpreter {
                 if(SymbolTable.s2tree.get(currentClass).field_names.contains(id)){
                     int idx = SymbolTable.s2tree.get(currentClass).field_names.indexOf(id);
                     Obj tempObj = currentObj.fields.get(idx);
+                    if(!tempObj.isInitial){
+                        System.err.println("Variable "+currentObj.field_names.get(idx)+" might not have been initialized");
+                    }
                     if(tempObj.type.compareTo("int[]")!=0){
                         System.err.println("Opera '[]' cannot be applied to "+tempObj.type);
                         return null;
@@ -566,6 +570,7 @@ public class RuntimeInterpreter {
                 return null;
             }
             Obj o = new Obj(SymbolTable.s2tree.get(typename));
+            o.isInitial=true;
             Result res = new Result();
             res.type=typename;
             res.obj=o;
@@ -621,6 +626,7 @@ public class RuntimeInterpreter {
             }
             else{
                 System.err.println("Cannot resolve symbol: "+id);
+                bucket b = SymbolTable.table[SymbolTable.hash(id)];
                 return null;
             }
         }

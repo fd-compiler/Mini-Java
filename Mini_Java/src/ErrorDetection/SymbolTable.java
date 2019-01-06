@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class SymbolTable {
-    private static final int SIZE = 200;
+    private static final int SIZE = 1000;
     public static bucket[] table = new bucket[SIZE];       // used for int
     public static bucket_b[] table_b = new bucket_b[SIZE]; // used for boolean
     public static bucket_a[] table_a = new bucket_a[SIZE]; // used for array
@@ -115,7 +115,7 @@ public class SymbolTable {
 
     }
 
-    private static int hash(String s) {
+    public static int hash(String s) {
         int h = 0;
         int i = 0;
         for(; i<s.length(); i++) {
