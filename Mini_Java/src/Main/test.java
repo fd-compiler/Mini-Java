@@ -10,7 +10,7 @@ import ErrorDetection.*;
 
 public class test {
     static public void main(String []args) throws Exception{
-        String inputFile = "C:\\Users\\69411\\Desktop\\ljl2.expr";
+        String inputFile = "src\\Main\\ljl2.expr";
         CharStream input = CharStreams.fromFileName(inputFile);
 
         miniJavaLexer lexer = new miniJavaLexer(input);
