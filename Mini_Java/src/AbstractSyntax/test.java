@@ -22,7 +22,6 @@ public class test {
         eval.visit(tree);
         ErrorDetector detector = new ErrorDetector(eval.root);
         detector.checkClasses();
-        SymbolTable.checkNullClass();
         detector.recursiveCheck();
         RuntimeInterpreter interpreter = new RuntimeInterpreter(eval.root);
         interpreter.interpret();

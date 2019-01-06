@@ -10,6 +10,7 @@ public class Obj {
     int iValue;
     boolean bValue;
     int []aValue;
+    boolean isInitial;
 
     //todo: to support tracking the fields of the parent, we may need to change this structure
     List<String> field_names;
@@ -23,6 +24,7 @@ public class Obj {
     public Obj(InheritanceTree tree){
         this.tree = tree;
         type=tree.id;
+        isInitial=false;
         field_names = new ArrayList<>();
         types = new ArrayList<>();
         fields = new ArrayList<>();

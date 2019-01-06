@@ -11,6 +11,8 @@ public class ljl_test {
         list.add("ljl");
         list.add("ohl");
         list.add("tx");
+        int a[]=new int [10];
+        System.out.println(a[10]);
 
         System.out.println(list.get(0));
         System.out.println(list.get(1));
