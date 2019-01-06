@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InheritanceTree {
-    public boolean define=false;
+    boolean define=false;
     public String id;
-    public InheritanceTree parent;
+    InheritanceTree parent;
 
     // int "int"
     // int[] "int[]"

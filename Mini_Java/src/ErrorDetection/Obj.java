@@ -21,7 +21,7 @@ public class Obj {
         return tree.id;
     }
 
-    public Obj(InheritanceTree tree){
+    Obj(InheritanceTree tree){
         this.tree = tree;
         type=tree.id;
         isInitial=false;

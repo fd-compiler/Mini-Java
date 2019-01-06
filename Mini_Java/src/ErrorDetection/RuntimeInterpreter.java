@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Set;
 
 public class RuntimeInterpreter {
-    Absyn root;
+    private Absyn root;
     private boolean classvar;
     private String currentClass;
     private Obj currentObj;
 
-    List<String> classStack = new LinkedList<>();
-    List<Obj> objStack = new LinkedList<>();
+    private List<String> classStack = new LinkedList<>();
+    private List<Obj> objStack = new LinkedList<>();
 
     public RuntimeInterpreter(Absyn root){
         this.root=root;
@@ -24,7 +24,7 @@ public class RuntimeInterpreter {
         interpret(root);
     }
 
-    public Result interpret(Absyn node){
+    private Result interpret(Absyn node){
         if(node.getClass()==A_Goal.class){
             //the root
             interpret(((A_Goal)node).a_main);
@@ -594,7 +594,7 @@ public class RuntimeInterpreter {
             return null;
         }
     }
-    public Result fetchID(String id){
+    private Result fetchID(String id){
         Result res = new Result();
         Card card = SymbolTable.findVariable(id);
         if(!card.isIn){

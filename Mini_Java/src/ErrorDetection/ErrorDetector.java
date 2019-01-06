@@ -3,11 +3,10 @@ package ErrorDetection;
 import AbstractSyntax.*;
 
 public class ErrorDetector {
-    Absyn root;
+    private Absyn root;
 
     private boolean classvar;
     private String currentClass;
-    private String currentMethod;
     public ErrorDetector(Absyn root){
         this.root = root;
     }
@@ -62,7 +61,7 @@ public class ErrorDetector {
         recursiveCheck(root);
     }
 
-    public int recursiveCheck(Absyn node){
+    private int recursiveCheck(Absyn node){
         if(node.getClass()==A_Goal.class){
             //the root
             recursiveCheck(((A_Goal)node).a_main);
